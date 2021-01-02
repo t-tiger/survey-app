@@ -1,7 +1,12 @@
 package repository
 
-import "github.com/t-tiger/survey/server/entity"
+import (
+	"context"
+
+	"github.com/t-tiger/survey/server/entity"
+)
 
 type User interface {
-	Create(email, password string) (entity.User, error)
+	FindByEmail(ctx context.Context, email string) (*entity.User, error)
+	Create(ctx context.Context, name, email, password string) (entity.User, error)
 }

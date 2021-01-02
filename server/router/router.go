@@ -3,14 +3,12 @@ package router
 import (
 	"net/http"
 
-	"github.com/t-tiger/survey/server/usecase"
-
-	"github.com/t-tiger/survey/server/persistence"
-	"gorm.io/gorm"
-
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/t-tiger/survey/server/handler"
+	"github.com/t-tiger/survey/server/persistence"
+	"github.com/t-tiger/survey/server/usecase"
+	"gorm.io/gorm"
 )
 
 func New(db *gorm.DB) http.Handler {
@@ -18,8 +16,8 @@ func New(db *gorm.DB) http.Handler {
 	r.Use(middleware.Logger)
 
 	userRepo := persistence.NewUser(db)
-	userUsecase := usecase.NewUser(userRepo)
-	userHandler := handler.NewUser(userUsecase)
+	userCreateUsecase := usecase.NewUserCreate(userRepo)
+	userHandler := handler.NewUser(userCreateUsecase)
 
 	r.Post("/users", userHandler.Create)
 
