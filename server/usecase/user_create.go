@@ -11,6 +11,8 @@ import (
 	"github.com/t-tiger/survey/server/repository"
 )
 
+const passWordDigestCost = 10
+
 var (
 	emailRegex    = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
 	passwordRegex = regexp.MustCompile("^[a-zA-Z0-9.@!#$%&'*+/=?^_`{|}~-]+$")
@@ -40,14 +42,14 @@ func (u *UserCreate) Call(ctx context.Context, name, email, password string) (us
 	}
 	duplicated, err := u.repo.FindByEmail(ctx, email)
 	if err != nil {
-		return user, cerrors.Errorf(cerrors.Unexpected, err.Error())
+		return user, err
 	}
 	if duplicated != nil {
 		return user, cerrors.Errorf(cerrors.Duplicated, "email has already been registered")
 	}
 
 	// create digested password
-	digestPass, err := bcrypt.GenerateFromPassword([]byte(password), 10)
+	digestPass, err := bcrypt.GenerateFromPassword([]byte(password), passWordDigestCost)
 	if err != nil {
 		return user, cerrors.Errorf(cerrors.Unexpected, err.Error())
 	}

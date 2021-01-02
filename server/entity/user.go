@@ -1,7 +1,8 @@
 package entity
 
 type User struct {
-	ID    string `gorm:"type:uuid;default:uuid_generate_v4()"`
-	Name  string
-	Email string
+	ID             string `json:"id" gorm:"type:uuid;default:uuid_generate_v4()"`
+	Name           string `json:"name"`
+	Email          string `json:"email"`
+	PasswordDigest string `json:"-"`
 }

@@ -17,12 +17,6 @@ func NewUser(db *gorm.DB) *User {
 	return &User{db: db}
 }
 
-// userWithPassword embeds entity.User with PasswordDigest since entity.User does not have password field
-type userWithPassword struct {
-	entity.User
-	PasswordDigest string
-}
-
 func (p *User) FindByEmail(ctx context.Context, email string) (*entity.User, error) {
 	var u entity.User
 	if err := p.db.WithContext(ctx).Where(&entity.User{Email: email}).Find(&u).Error; err != nil {
@@ -35,12 +29,9 @@ func (p *User) FindByEmail(ctx context.Context, email string) (*entity.User, err
 }
 
 func (p *User) Create(ctx context.Context, name, email, password string) (entity.User, error) {
-	u := userWithPassword{
-		User:           entity.User{Name: name, Email: email},
-		PasswordDigest: password,
-	}
+	u := entity.User{Name: name, Email: email, PasswordDigest: password}
 	if err := p.db.WithContext(ctx).Table("users").Create(&u).Error; err != nil {
 		return entity.User{}, cerrors.Errorf(cerrors.DatabaseErr, err.Error())
 	}
-	return u.User, nil
+	return u, nil
 }
