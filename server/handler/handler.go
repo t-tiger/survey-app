@@ -17,8 +17,8 @@ import (
 func handleError(err error, w http.ResponseWriter) {
 	log.Error(err.Error())
 
-	code := cerrors.GetCode(err)
-	switch code {
+	reason := cerrors.GetReason(err)
+	switch reason {
 	case cerrors.Duplicated:
 		http.Error(w, err.Error(), http.StatusConflict)
 	case cerrors.ValidationFailed:

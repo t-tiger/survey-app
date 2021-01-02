@@ -5,27 +5,27 @@ import (
 )
 
 type custom struct {
-	code Code
-	err  error
+	reason Reason
+	err    error
 }
 
 func (e *custom) Error() string {
 	return e.err.Error()
 }
 
-func Errorf(c Code, format string, args ...interface{}) error {
+func Errorf(reason Reason, format string, args ...interface{}) error {
 	return &custom{
-		code: c,
-		err:  errors.Errorf(format, args...),
+		reason: reason,
+		err:    errors.Errorf(format, args...),
 	}
 }
 
-func GetCode(err error) Code {
+func GetReason(err error) Reason {
 	if err == nil {
 		return OK
 	}
 	if e, ok := err.(*custom); ok {
-		return e.code
+		return e.reason
 	}
 	return Unknown
 }

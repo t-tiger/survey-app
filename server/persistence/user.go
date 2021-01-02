@@ -17,6 +17,7 @@ func NewUser(db *gorm.DB) *User {
 	return &User{db: db}
 }
 
+// userWithPassword embeds entity.User with PasswordDigest since entity.User does not have password field
 type userWithPassword struct {
 	entity.User
 	PasswordDigest string

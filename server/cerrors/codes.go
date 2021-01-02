@@ -1,13 +1,13 @@
 package cerrors
 
-type Code string
+type Reason string
 
 const (
-	OK      Code = "ok"
-	Unknown Code = "unknown"
+	OK      Reason = "ok"
+	Unknown Reason = "unknown"
 
-	Duplicated       Code = "duplicated"
-	Unexpected       Code = "un_expected"
-	ValidationFailed Code = "validation_Failed"
-	DatabaseErr      Code = "database_err"
+	Duplicated       Reason = "duplicated"
+	Unexpected       Reason = "un_expected"
+	ValidationFailed Reason = "validation_Failed"
+	DatabaseErr      Reason = "database_err"
 )

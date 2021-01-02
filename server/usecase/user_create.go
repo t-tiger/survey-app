@@ -11,8 +11,10 @@ import (
 	"github.com/t-tiger/survey/server/repository"
 )
 
-var emailRegex = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
-var passwordRegex = regexp.MustCompile("^[a-zA-Z0-9.@!#$%&'*+/=?^_`{|}~-]+$")
+var (
+	emailRegex    = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
+	passwordRegex = regexp.MustCompile("^[a-zA-Z0-9.@!#$%&'*+/=?^_`{|}~-]+$")
+)
 
 type UserCreate struct {
 	repo repository.User
