@@ -7,7 +7,5 @@ create table users
 (
     id              uuid default uuid_generate_v4() not null,
     email           varchar(100)                    not null,
-    password_digest varchar                         not null,
-    created_at      timestamp                       not null,
-    updated_at      timestamp                       not null
+    password_digest varchar                         not null
 );
