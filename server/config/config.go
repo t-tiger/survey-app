@@ -9,6 +9,7 @@ import (
 var Config appConfig
 
 type appConfig struct {
+	SecretKey        string `mapstructure:"secret_key" validate:"required"`
 	PostgresHost     string `mapstructure:"postgres_host" validate:"required"`
 	PostgresPort     int    `mapstructure:"postgres_port" validate:"numeric"`
 	PostgresDB       string `mapstructure:"postgres_db" validate:"required"`
@@ -18,6 +19,7 @@ type appConfig struct {
 
 func init() {
 	v := viper.New()
+	v.SetDefault("secret_key", "")
 	v.SetDefault("postgres_host", "")
 	v.SetDefault("postgres_port", 5432)
 	v.SetDefault("postgres_db", "")

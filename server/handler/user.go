@@ -23,7 +23,7 @@ type createRequest struct {
 }
 
 type createResponse struct {
-	// TODO
+	Token string `json:"token"`
 }
 
 func (h *User) Create(w http.ResponseWriter, r *http.Request) {
@@ -32,11 +32,16 @@ func (h *User) Create(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "", 500)
 		return
 	}
-	_, err := h.createUsecase.Call(r.Context(), req.Name, req.Email, req.Password)
+	user, err := h.createUsecase.Call(r.Context(), req.Name, req.Email, req.Password)
 	if err != nil {
 		handleError(err, w)
 		return
 	}
-	res := createResponse{}
+	token, err := createToken(user)
+	if err != nil {
+		handleError(err, w)
+		return
+	}
+	res := createResponse{Token: token}
 	render.JSON(w, r, &res)
 }

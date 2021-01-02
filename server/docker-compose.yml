@@ -4,6 +4,7 @@ services:
     image: survey-server:latest
     command: ["/app/bin/survey-server"]
     environment:
+      SECRET_KEY: BH4G7yzUgP\xanm
       POSTGRES_HOST: db
       POSTGRES_PORT: 5432
       POSTGRES_DB: survey
@@ -16,6 +17,7 @@ services:
   test:
     image: survey-server-base:latest
     environment:
+      SECRET_KEY: BH4G7yzUgP\xanm
       POSTGRES_HOST: db
       POSTGRES_PORT: 5432
       POSTGRES_DB: survey
