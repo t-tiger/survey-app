@@ -1,0 +1,7 @@
+{
+  "name": "survey",
+  "version": "0.1.0",
+  "description": "simple survey application",
+  "main": "index.js",
+  "private": true
+}
