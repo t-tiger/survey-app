@@ -21,18 +21,18 @@ func NewUser(authUsecase *usecase.UserAuth, createUsecase *usecase.UserCreate) *
 	}
 }
 
-type userAuthRequest struct {
+type userLoginRequest struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
-type userAuthResponse struct {
+type userLoginResponse struct {
 	Token string      `json:"token"`
 	User  entity.User `json:"user"`
 }
 
-func (h *User) Auth(w http.ResponseWriter, r *http.Request) {
-	var req userAuthRequest
+func (h *User) Login(w http.ResponseWriter, r *http.Request) {
+	var req userLoginRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		handleError(err, w)
 		return
@@ -47,7 +47,7 @@ func (h *User) Auth(w http.ResponseWriter, r *http.Request) {
 		handleError(err, w)
 		return
 	}
-	res := userAuthResponse{Token: token, User: user}
+	res := userLoginResponse{Token: token, User: user}
 	render.JSON(w, r, &res)
 }
 
@@ -57,7 +57,7 @@ type userCreateRequest struct {
 	Password string `json:"password"`
 }
 
-type userCreateResponse = userAuthResponse
+type userCreateResponse = userLoginResponse
 
 func (h *User) Create(w http.ResponseWriter, r *http.Request) {
 	var req userCreateRequest

@@ -67,6 +67,14 @@ func (h *Survey) List(w http.ResponseWriter, r *http.Request) {
 	render.JSON(w, r, res)
 }
 
+type surveyCreateRequest struct {
+	// TODO
+}
+
+func (h *Survey) Create(w http.ResponseWriter, r *http.Request) {
+	panic("implement me")
+}
+
 // newSurveyListResponse builds response value from totalCount and entity.Survey
 func newSurveyListResponse(totalCnt int, ss []entity.Survey) surveyListResponse {
 	res := surveyListResponse{

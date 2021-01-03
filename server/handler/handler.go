@@ -1,8 +1,10 @@
 package handler
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -11,6 +13,8 @@ import (
 	"github.com/t-tiger/survey/server/config"
 )
 
+const ctxUserID = "userID"
+
 func handleError(err error, w http.ResponseWriter) {
 	log.Error(err.Error())
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
@@ -18,6 +22,8 @@ func handleError(err error, w http.ResponseWriter) {
 	message := err.Error()
 	reason := cerrors.GetReason(err)
 	switch reason {
+	case cerrors.Unauthorized:
+		w.WriteHeader(http.StatusUnauthorized)
 	case cerrors.Duplicated:
 		w.WriteHeader(http.StatusConflict)
 	case cerrors.InvalidInput:
@@ -44,4 +50,39 @@ func createToken(userID string) (string, error) {
 		return "", cerrors.Errorf(cerrors.Unexpected, err.Error())
 	}
 	return s, nil
+}
+
+// retrieveUserID returns userID by decoding jwt with Authorization value
+func retrieveUserID(r *http.Request) *string {
+	authHead := r.Header.Get("Authorization")
+	if len(authHead) == 0 {
+		return nil
+	}
+	tokenStr := strings.Replace(authHead, "Bearer ", "", 1)
+
+	// decode json web token
+	c := jwt.MapClaims{}
+	_, err := jwt.ParseWithClaims(tokenStr, c, func(t *jwt.Token) (interface{}, error) {
+		return []byte(config.Config.SecretKey), nil
+	})
+	if err != nil {
+		return nil
+	}
+	if v, ok := c["user_id"].(string); ok {
+		return &v
+	}
+	return nil
+}
+
+func AuthUser(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		userID := retrieveUserID(r)
+		if userID == nil {
+			handleError(cerrors.Errorf(cerrors.Unauthorized, "unauthorized user"), w)
+			return
+		}
+		// set authorized user's id in context
+		ctx := context.WithValue(r.Context(), ctxUserID, *userID)
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
 }

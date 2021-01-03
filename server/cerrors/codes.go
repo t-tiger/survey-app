@@ -1,13 +1,13 @@
 package cerrors
 
-type Reason string
+type Reason int
 
 const (
-	OK      Reason = "ok"
-	Unknown Reason = "unknown"
-
-	Duplicated   Reason = "duplicated"
-	InvalidInput Reason = "invalid_input"
-	Unexpected   Reason = "un_expected"
-	DatabaseErr  Reason = "database_err"
+	OK Reason = iota
+	Unknown
+	Duplicated
+	InvalidInput
+	Unauthorized
+	Unexpected
+	DatabaseErr
 )
