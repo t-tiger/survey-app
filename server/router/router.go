@@ -29,9 +29,14 @@ func New(db *gorm.DB) http.Handler {
 		surveyCreateUsecase, surveyDeleteUsecase, surveyFetchListUsecase, surveyUpdateUsecase,
 	)
 
+	respondentRepo := persistence.NewRespondent(db)
+	respondentCreateUsecase := usecase.NewRespondentCreate(respondentRepo, surveyRepo)
+	respondentHandler := handler.NewRespondent(respondentCreateUsecase)
+
 	r.Post("/login", userHandler.Login)
 	r.Post("/users", userHandler.Create)
 	r.Get("/surveys", surveyHandler.List)
+	r.Post("/respondents", respondentHandler.Create)
 
 	// authentication required group
 	r.Group(func(r chi.Router) {

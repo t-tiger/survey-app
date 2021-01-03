@@ -18,11 +18,11 @@ func NewUser(db *gorm.DB) *User {
 
 func (p *User) FindBy(ctx context.Context, email string) (*entity.User, error) {
 	var u entity.User
-	if err := p.db.WithContext(ctx).Where(&entity.User{Email: email}).Find(&u).Error; err != nil {
+	if err := p.db.WithContext(ctx).Where(&entity.User{Email: email}).First(&u).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, nil
+		}
 		return nil, cerrors.Errorf(cerrors.DatabaseErr, err.Error())
-	}
-	if u.ID == "" {
-		return nil, nil
 	}
 	return &u, nil
 }

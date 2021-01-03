@@ -55,15 +55,3 @@ type Option struct {
 	Title      string
 	Answers    []Answer
 }
-
-type Respondent struct {
-	ID       string `json:"id" gorm:"type:uuid;default:uuid_generate_v4()"`
-	SurveyID string
-	Email    string
-	Name     string
-}
-
-type Answer struct {
-	RespondentID string
-	OptionID     string
-}
