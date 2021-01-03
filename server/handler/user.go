@@ -21,18 +21,18 @@ func NewUser(authUsecase *usecase.UserAuth, createUsecase *usecase.UserCreate) *
 	}
 }
 
-type authRequest struct {
+type userAuthRequest struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
-type authResponse struct {
+type userAuthResponse struct {
 	Token string      `json:"token"`
 	User  entity.User `json:"user"`
 }
 
 func (h *User) Auth(w http.ResponseWriter, r *http.Request) {
-	var req authRequest
+	var req userAuthRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		handleError(err, w)
 		return
@@ -47,20 +47,20 @@ func (h *User) Auth(w http.ResponseWriter, r *http.Request) {
 		handleError(err, w)
 		return
 	}
-	res := authResponse{Token: token, User: user}
+	res := userAuthResponse{Token: token, User: user}
 	render.JSON(w, r, &res)
 }
 
-type createRequest struct {
+type userCreateRequest struct {
 	Name     string `json:"name"`
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
-type createResponse = authResponse
+type userCreateResponse = userAuthResponse
 
 func (h *User) Create(w http.ResponseWriter, r *http.Request) {
-	var req createRequest
+	var req userCreateRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		handleError(err, w)
 		return
@@ -75,6 +75,6 @@ func (h *User) Create(w http.ResponseWriter, r *http.Request) {
 		handleError(err, w)
 		return
 	}
-	res := createResponse{Token: token, User: user}
+	res := userCreateResponse{Token: token, User: user}
 	render.JSON(w, r, &res)
 }
