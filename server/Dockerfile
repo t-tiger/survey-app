@@ -1,7 +1,7 @@
 # syntax = docker/dockerfile:experimental
 # =====================
 FROM golang:1.15-alpine3.12 as base
-RUN apk add --no-cache make
+RUN apk add --no-cache make gcc musl-dev
 WORKDIR /go/src/github.com/t-tiger/survey/server/
 
 # =====================
