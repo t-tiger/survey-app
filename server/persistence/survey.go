@@ -4,17 +4,23 @@ import (
 	"context"
 	"sort"
 
+	"github.com/t-tiger/survey/server/repository"
+
 	"github.com/t-tiger/survey/server/cerrors"
 	"github.com/t-tiger/survey/server/entity"
 	"gorm.io/gorm"
 )
 
 type Survey struct {
-	db *gorm.DB
+	transaction
 }
 
 func NewSurvey(db *gorm.DB) *Survey {
-	return &Survey{db: db}
+	return &Survey{transaction: transaction{db}}
+}
+
+func (p *Survey) StartTransaction(db *gorm.DB) repository.Transactional {
+	return NewSurvey(db)
 }
 
 func (p *Survey) Count(ctx context.Context) (int, error) {
