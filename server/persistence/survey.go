@@ -71,21 +71,12 @@ func (p *Survey) Create(ctx context.Context, s entity.Survey) (entity.Survey, er
 
 func (p *Survey) Delete(ctx context.Context, s entity.Survey) error {
 	err := p.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		// collect id of options and questions
-		oIDs := make([]string, 0)
-		qIDs := make([]string, len(s.Questions))
-		for i, q := range s.Questions {
-			qIDs[i] = q.ID
-			for _, o := range q.Options {
-				oIDs = append(oIDs, o.ID)
-			}
-		}
 		// delete answers
-		if err := tx.Where("option_id in (?)", oIDs).Delete(&entity.Answer{}).Error; err != nil {
+		if err := tx.Where("option_id in (?)", s.OptionIDs()).Delete(&entity.Answer{}).Error; err != nil {
 			return err
 		}
 		// delete options
-		if err := tx.Where("question_id in (?)", qIDs).Delete(&entity.Option{}).Error; err != nil {
+		if err := tx.Where("question_id in (?)", s.QuestionIDs()).Delete(&entity.Option{}).Error; err != nil {
 			return err
 		}
 		// delete questions

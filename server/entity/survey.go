@@ -11,6 +11,24 @@ type Survey struct {
 	Questions   []Question
 }
 
+func (s *Survey) QuestionIDs() []string {
+	ids := make([]string, len(s.Questions))
+	for i, q := range s.Questions {
+		ids[i] = q.ID
+	}
+	return ids
+}
+
+func (s *Survey) OptionIDs() []string {
+	var ids []string
+	for _, q := range s.Questions {
+		for _, o := range q.Options {
+			ids = append(ids, o.ID)
+		}
+	}
+	return ids
+}
+
 type Question struct {
 	ID       string `json:"id" gorm:"type:uuid;default:uuid_generate_v4()"`
 	SurveyID string
