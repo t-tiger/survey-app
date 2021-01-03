@@ -21,13 +21,18 @@ func handleError(err error, w http.ResponseWriter) {
 	switch reason {
 	case cerrors.Unauthorized:
 		w.WriteHeader(http.StatusUnauthorized)
+	case cerrors.Forbidden:
+		w.WriteHeader(http.StatusForbidden)
+	case cerrors.NotFound:
+		message = "not found"
+		w.WriteHeader(http.StatusNotFound)
 	case cerrors.Duplicated:
 		w.WriteHeader(http.StatusConflict)
 	case cerrors.InvalidInput:
 		w.WriteHeader(http.StatusUnprocessableEntity)
 	default:
+		message = "internal server error"
 		w.WriteHeader(http.StatusInternalServerError)
-		message = "internal server error" // hide actual error message
 	}
 
 	if err := json.NewEncoder(w).Encode(map[string]interface{}{"message": message}); err != nil {

@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
 	"github.com/t-tiger/survey/server/entity"
 	"github.com/t-tiger/survey/server/usecase"
@@ -12,12 +13,18 @@ import (
 
 type Survey struct {
 	createUsecase *usecase.SurveyCreate
+	deleteUsecase *usecase.SurveyDelete
 	fetchUsecase  *usecase.SurveyFetchList
 }
 
-func NewSurvey(createUsecase *usecase.SurveyCreate, fetchUsecase *usecase.SurveyFetchList) *Survey {
+func NewSurvey(
+	createUsecase *usecase.SurveyCreate,
+	deleteUsecase *usecase.SurveyDelete,
+	fetchUsecase *usecase.SurveyFetchList,
+) *Survey {
 	return &Survey{
 		createUsecase: createUsecase,
+		deleteUsecase: deleteUsecase,
 		fetchUsecase:  fetchUsecase,
 	}
 }
@@ -91,7 +98,18 @@ func (h *Survey) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	res := newSurveyResponse(s)
+	w.WriteHeader(http.StatusCreated)
 	render.JSON(w, r, res)
+}
+
+func (h *Survey) Delete(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	userID := r.Context().Value(ctxUserID).(string)
+	if err := h.deleteUsecase.Call(r.Context(), id, userID); err != nil {
+		handleError(err, w)
+		return
+	}
+	w.WriteHeader(http.StatusNoContent)
 }
 
 // newSurveyListResponse builds surveyListResponse from totalCount and slice of entity.Survey

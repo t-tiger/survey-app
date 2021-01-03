@@ -26,17 +26,16 @@ func (p *Survey) Count(ctx context.Context) (int, error) {
 }
 
 func (p *Survey) Find(ctx context.Context, limit, offset int) ([]entity.Survey, error) {
-	var surveys []entity.Survey
-	err := p.db.WithContext(ctx).
-		Preload("Questions").Preload("Questions.Options").Preload("Questions.Options.Answers").
-		Limit(limit).Offset(offset).
-		Order("created_at desc").Find(&surveys).Error
+	var ss []entity.Survey
+	err := p.preloadedDB().WithContext(ctx).
+		Limit(limit).Offset(offset).Order("created_at desc").
+		Find(&ss).Error
 	if err != nil {
 		return nil, cerrors.Errorf(cerrors.DatabaseErr, err.Error())
 	}
 
 	// sort entities by sequence
-	for _, s := range surveys {
+	for _, s := range ss {
 		sort.Slice(s.Questions, func(i, j int) bool {
 			return s.Questions[i].Sequence < s.Questions[j].Sequence
 		})
@@ -46,7 +45,21 @@ func (p *Survey) Find(ctx context.Context, limit, offset int) ([]entity.Survey, 
 			})
 		}
 	}
-	return surveys, nil
+	return ss, nil
+}
+
+func (p *Survey) FindBy(ctx context.Context, id string) (entity.Survey, error) {
+	var s entity.Survey
+	err := p.preloadedDB().WithContext(ctx).
+		Where(&entity.Survey{ID: id}).
+		First(&s).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return entity.Survey{}, cerrors.Errorf(cerrors.NotFound, err.Error())
+		}
+		return entity.Survey{}, cerrors.Errorf(cerrors.DatabaseErr, err.Error())
+	}
+	return s, nil
 }
 
 func (p *Survey) Create(ctx context.Context, s entity.Survey) (entity.Survey, error) {
@@ -54,4 +67,44 @@ func (p *Survey) Create(ctx context.Context, s entity.Survey) (entity.Survey, er
 		return entity.Survey{}, cerrors.Errorf(cerrors.DatabaseErr, err.Error())
 	}
 	return s, nil
+}
+
+func (p *Survey) Delete(ctx context.Context, s entity.Survey) error {
+	err := p.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		// collect id of options and questions
+		oIDs := make([]string, 0)
+		qIDs := make([]string, len(s.Questions))
+		for i, q := range s.Questions {
+			qIDs[i] = q.ID
+			for _, o := range q.Options {
+				oIDs = append(oIDs, o.ID)
+			}
+		}
+		// delete answers
+		if err := tx.Where("option_id in (?)", oIDs).Delete(&entity.Answer{}).Error; err != nil {
+			return err
+		}
+		// delete options
+		if err := tx.Where("question_id in (?)", qIDs).Delete(&entity.Option{}).Error; err != nil {
+			return err
+		}
+		// delete questions
+		if err := tx.Where(&entity.Question{SurveyID: s.ID}).Delete(&entity.Question{}).Error; err != nil {
+			return err
+		}
+		// delete respondents
+		if err := tx.Where(&entity.Respondent{SurveyID: s.ID}).Delete(&entity.Respondent{}).Error; err != nil {
+			return err
+		}
+		// delete survey finally
+		return tx.Where(&entity.Survey{ID: s.ID}).Delete(&s).Error
+	})
+	if err != nil {
+		return cerrors.Errorf(cerrors.DatabaseErr, err.Error())
+	}
+	return nil
+}
+
+func (p *Survey) preloadedDB() *gorm.DB {
+	return p.db.Preload("Questions").Preload("Questions.Options").Preload("Questions.Options.Answers")
 }

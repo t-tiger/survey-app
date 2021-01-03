@@ -22,8 +22,11 @@ func New(db *gorm.DB) http.Handler {
 
 	surveyRepo := persistence.NewSurvey(db)
 	surveyCreateUsecase := usecase.NewSurveyCreate(surveyRepo)
+	surveyDeleteUsecase := usecase.NewSurveyDelete(surveyRepo)
 	surveyFetchListUsecase := usecase.NewSurveyFetchList(surveyRepo)
-	surveyHandler := handler.NewSurvey(surveyCreateUsecase, surveyFetchListUsecase)
+	surveyHandler := handler.NewSurvey(
+		surveyCreateUsecase, surveyDeleteUsecase, surveyFetchListUsecase,
+	)
 
 	r.Post("/login", userHandler.Login)
 	r.Post("/users", userHandler.Create)
@@ -33,6 +36,7 @@ func New(db *gorm.DB) http.Handler {
 	r.Group(func(r chi.Router) {
 		r.Use(handler.AuthUser)
 		r.Post("/surveys", surveyHandler.Create)
+		r.Delete("/surveys/{id}", surveyHandler.Delete)
 	})
 
 	return r

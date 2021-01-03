@@ -7,14 +7,14 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/t-tiger/survey/server/cerrors"
 	"github.com/t-tiger/survey/server/entity"
-	"github.com/t-tiger/survey/server/repository"
 )
 
 type surveyRepoMock struct {
-	repository.Survey
 	CountMock  func(ctx context.Context) (int, error)
 	FindMock   func(ctx context.Context, limit, offset int) ([]entity.Survey, error)
+	FindByMock func(ctx context.Context, id string) (entity.Survey, error)
 	CreateMock func(ctx context.Context, s entity.Survey) (entity.Survey, error)
+	DeleteMock func(ctx context.Context, s entity.Survey) error
 }
 
 func (r *surveyRepoMock) Count(ctx context.Context) (int, error) {
@@ -25,8 +25,16 @@ func (r *surveyRepoMock) Find(ctx context.Context, limit, offset int) ([]entity.
 	return r.FindMock(ctx, limit, offset)
 }
 
+func (r *surveyRepoMock) FindBy(ctx context.Context, id string) (entity.Survey, error) {
+	return r.FindByMock(ctx, id)
+}
+
 func (r *surveyRepoMock) Create(ctx context.Context, s entity.Survey) (entity.Survey, error) {
 	return r.CreateMock(ctx, s)
+}
+
+func (r *surveyRepoMock) Delete(ctx context.Context, s entity.Survey) error {
+	return r.DeleteMock(ctx, s)
 }
 
 func TestSurveyFetchList_Call(t *testing.T) {

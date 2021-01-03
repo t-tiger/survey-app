@@ -7,12 +7,10 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/t-tiger/survey/server/cerrors"
 	"github.com/t-tiger/survey/server/entity"
-	"github.com/t-tiger/survey/server/repository"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type userRepoMock struct {
-	repository.User
 	FindByEmailMock func(ctx context.Context, email string) (*entity.User, error)
 	CreateMock      func(ctx context.Context, name, email, password string) (entity.User, error)
 }

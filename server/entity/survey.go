@@ -35,6 +35,6 @@ type Respondent struct {
 }
 
 type Answer struct {
-	SurveyID string
-	OptionID string
+	RespondentID string
+	OptionID     string
 }

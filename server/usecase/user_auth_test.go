@@ -14,7 +14,7 @@ import (
 func TestUserAuth_Call(t *testing.T) {
 	// initialize appropriate password
 	pw := []byte("foobar")
-	pwDigest, err := bcrypt.GenerateFromPassword(pw, 10)
+	pwDigest, err := bcrypt.GenerateFromPassword(pw, passWordDigestCost)
 	require.NoError(t, err)
 
 	// mock repository
