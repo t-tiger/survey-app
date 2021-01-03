@@ -7,7 +7,6 @@ require (
 	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/go-chi/render v1.0.1
 	github.com/go-playground/validator/v10 v10.4.1
-	github.com/google/uuid v1.1.3
 	github.com/pkg/errors v0.8.1
 	github.com/prometheus/common v0.4.0
 	github.com/spf13/viper v1.7.1

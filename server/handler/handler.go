@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"encoding/json"
 	"net/http"
 	"time"
 
@@ -12,15 +13,24 @@ import (
 
 func handleError(err error, w http.ResponseWriter) {
 	log.Error(err.Error())
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 
+	message := err.Error()
 	reason := cerrors.GetReason(err)
 	switch reason {
 	case cerrors.Duplicated:
-		http.Error(w, err.Error(), http.StatusConflict)
+		w.WriteHeader(http.StatusConflict)
 	case cerrors.InvalidInput:
-		http.Error(w, err.Error(), http.StatusUnprocessableEntity)
+		w.WriteHeader(http.StatusUnprocessableEntity)
 	default:
-		http.Error(w, "internal server error", http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		message = "internal server error" // hide actual error message
+	}
+
+	if err := json.NewEncoder(w).Encode(map[string]interface{}{"message": message}); err != nil {
+		log.Errorf("failed to encode error message: %+v", err)
+		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+		w.Write([]byte(message))
 	}
 }
 
