@@ -18,7 +18,7 @@ func NewUserAuth(repo repository.User) *UserAuth {
 }
 
 func (u *UserAuth) Call(ctx context.Context, email, password string) (entity.User, error) {
-	user, err := u.repo.FindByEmail(ctx, email)
+	user, err := u.repo.FindBy(ctx, email)
 	if err != nil {
 		return entity.User{}, cerrors.Errorf(cerrors.Unexpected, err.Error())
 	}
