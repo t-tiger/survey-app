@@ -6,8 +6,8 @@ const (
 	OK      Reason = "ok"
 	Unknown Reason = "unknown"
 
-	Duplicated       Reason = "duplicated"
-	Unexpected       Reason = "un_expected"
-	ValidationFailed Reason = "validation_Failed"
-	DatabaseErr      Reason = "database_err"
+	Duplicated   Reason = "duplicated"
+	InvalidInput Reason = "invalid_input"
+	Unexpected   Reason = "un_expected"
+	DatabaseErr  Reason = "database_err"
 )

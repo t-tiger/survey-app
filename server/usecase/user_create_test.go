@@ -4,14 +4,11 @@ import (
 	"context"
 	"testing"
 
-	"golang.org/x/crypto/bcrypt"
-
 	"github.com/stretchr/testify/assert"
-
 	"github.com/t-tiger/survey/server/cerrors"
-
 	"github.com/t-tiger/survey/server/entity"
 	"github.com/t-tiger/survey/server/repository"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type userRepoMock struct {
@@ -48,7 +45,7 @@ func TestUserCreate_Call(t *testing.T) {
 				password: "a1B2@^$_",
 			},
 			wantUser: entity.User{},
-			wantErr:  cerrors.Errorf(cerrors.ValidationFailed, "name must not be empty"),
+			wantErr:  cerrors.Errorf(cerrors.InvalidInput, "name must not be empty"),
 		},
 		{
 			name: "too short password",
@@ -58,7 +55,7 @@ func TestUserCreate_Call(t *testing.T) {
 				password: "a1B2",
 			},
 			wantUser: entity.User{},
-			wantErr:  cerrors.Errorf(cerrors.ValidationFailed, "password length must be greater than or equal to 5"),
+			wantErr:  cerrors.Errorf(cerrors.InvalidInput, "password length must be greater than or equal to 5"),
 		},
 		{
 			name: "password format is invalid",
@@ -68,7 +65,7 @@ func TestUserCreate_Call(t *testing.T) {
 				password: "a1B2@^$_あ",
 			},
 			wantUser: entity.User{},
-			wantErr:  cerrors.Errorf(cerrors.ValidationFailed, "password format is invalid"),
+			wantErr:  cerrors.Errorf(cerrors.InvalidInput, "password format is invalid"),
 		},
 		{
 			name: "email format is invalid",
@@ -78,7 +75,7 @@ func TestUserCreate_Call(t *testing.T) {
 				password: "a1B2@^$_",
 			},
 			wantUser: entity.User{},
-			wantErr:  cerrors.Errorf(cerrors.ValidationFailed, "email format is invalid"),
+			wantErr:  cerrors.Errorf(cerrors.InvalidInput, "email format is invalid"),
 		},
 		{
 			name: "duplicated email",

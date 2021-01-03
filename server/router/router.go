@@ -16,9 +16,11 @@ func New(db *gorm.DB) http.Handler {
 	r.Use(middleware.Logger)
 
 	userRepo := persistence.NewUser(db)
+	userAuthUsecase := usecase.NewUserAuth(userRepo)
 	userCreateUsecase := usecase.NewUserCreate(userRepo)
-	userHandler := handler.NewUser(userCreateUsecase)
+	userHandler := handler.NewUser(userAuthUsecase, userCreateUsecase)
 
+	r.Post("/login", userHandler.Auth)
 	r.Post("/users", userHandler.Create)
 
 	return r

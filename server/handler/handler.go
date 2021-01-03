@@ -5,13 +5,9 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
-	"github.com/t-tiger/survey/server/config"
-
-	"github.com/t-tiger/survey/server/entity"
-
 	"github.com/prometheus/common/log"
-
 	"github.com/t-tiger/survey/server/cerrors"
+	"github.com/t-tiger/survey/server/config"
 )
 
 func handleError(err error, w http.ResponseWriter) {
@@ -21,16 +17,16 @@ func handleError(err error, w http.ResponseWriter) {
 	switch reason {
 	case cerrors.Duplicated:
 		http.Error(w, err.Error(), http.StatusConflict)
-	case cerrors.ValidationFailed:
+	case cerrors.InvalidInput:
 		http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 	default:
 		http.Error(w, "internal server error", http.StatusInternalServerError)
 	}
 }
 
-func createToken(user entity.User) (string, error) {
+func createToken(userID string) (string, error) {
 	t := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"user_id": user.ID,
+		"user_id": userID,
 		"exp":     time.Now().Add(time.Hour * 24).Unix(),
 	})
 	s, err := t.SignedString([]byte(config.Config.SecretKey))
