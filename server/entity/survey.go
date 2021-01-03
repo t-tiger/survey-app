@@ -29,6 +29,17 @@ func (s *Survey) OptionIDs() []string {
 	return ids
 }
 
+func (s *Survey) HasAnswer() bool {
+	for _, q := range s.Questions {
+		for _, o := range q.Options {
+			if len(o.Answers) > 0 {
+				return true
+			}
+		}
+	}
+	return false
+}
+
 type Question struct {
 	ID       string `json:"id" gorm:"type:uuid;default:uuid_generate_v4()"`
 	SurveyID string

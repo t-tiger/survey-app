@@ -21,7 +21,7 @@ func (u *SurveyDelete) Call(ctx context.Context, id string, userID string) error
 		return err
 	}
 	if s.PublisherID != userID {
-		return cerrors.Errorf(cerrors.Forbidden, "prohibited to delete survey")
+		return cerrors.Errorf(cerrors.Forbidden, "you don't have permission to delete")
 	}
 	return u.repo.Delete(ctx, s)
 }

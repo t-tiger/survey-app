@@ -15,17 +15,20 @@ type Survey struct {
 	createUsecase *usecase.SurveyCreate
 	deleteUsecase *usecase.SurveyDelete
 	fetchUsecase  *usecase.SurveyFetchList
+	updateUsecase *usecase.SurveyUpdate
 }
 
 func NewSurvey(
 	createUsecase *usecase.SurveyCreate,
 	deleteUsecase *usecase.SurveyDelete,
 	fetchUsecase *usecase.SurveyFetchList,
+	updateUsecase *usecase.SurveyUpdate,
 ) *Survey {
 	return &Survey{
 		createUsecase: createUsecase,
 		deleteUsecase: deleteUsecase,
 		fetchUsecase:  fetchUsecase,
+		updateUsecase: updateUsecase,
 	}
 }
 
@@ -75,7 +78,7 @@ func (h *Survey) List(w http.ResponseWriter, r *http.Request) {
 	render.JSON(w, r, res)
 }
 
-type surveyCreateRequest struct {
+type surveySaveRequest struct {
 	Title     string `json:"title"`
 	Questions []struct {
 		Title   string `json:"title"`
@@ -86,13 +89,31 @@ type surveyCreateRequest struct {
 }
 
 func (h *Survey) Create(w http.ResponseWriter, r *http.Request) {
-	var req surveyCreateRequest
+	var req surveySaveRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		handleError(err, w)
 		return
 	}
 	userID := r.Context().Value(ctxUserID).(string)
-	s, err := h.createUsecase.Call(r.Context(), req.toSurvey(userID))
+	s, err := h.createUsecase.Call(r.Context(), req.toSurvey("", userID))
+	if err != nil {
+		handleError(err, w)
+		return
+	}
+	res := newSurveyResponse(s)
+	w.WriteHeader(http.StatusCreated)
+	render.JSON(w, r, res)
+}
+
+func (h *Survey) Update(w http.ResponseWriter, r *http.Request) {
+	var req surveySaveRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		handleError(err, w)
+		return
+	}
+	id := chi.URLParam(r, "id")
+	userID := r.Context().Value(ctxUserID).(string)
+	s, err := h.updateUsecase.Call(r.Context(), req.toSurvey(id, userID), userID)
 	if err != nil {
 		handleError(err, w)
 		return
@@ -153,8 +174,9 @@ func newSurveyResponse(s entity.Survey) surveyResponse {
 }
 
 // toSurvey builds entity.Survey from request and authorized userID
-func (r *surveyCreateRequest) toSurvey(userID string) entity.Survey {
+func (r *surveySaveRequest) toSurvey(id, userID string) entity.Survey {
 	s := entity.Survey{
+		ID:          id,
 		PublisherID: userID,
 		Title:       r.Title,
 		Questions:   make([]entity.Question, len(r.Questions)),

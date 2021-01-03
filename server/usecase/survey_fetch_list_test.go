@@ -4,17 +4,27 @@ import (
 	"context"
 	"testing"
 
+	"github.com/t-tiger/survey/server/repository"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/t-tiger/survey/server/cerrors"
 	"github.com/t-tiger/survey/server/entity"
 )
 
 type surveyRepoMock struct {
-	CountMock  func(ctx context.Context) (int, error)
-	FindMock   func(ctx context.Context, limit, offset int) ([]entity.Survey, error)
-	FindByMock func(ctx context.Context, id string) (entity.Survey, error)
-	CreateMock func(ctx context.Context, s entity.Survey) (entity.Survey, error)
-	DeleteMock func(ctx context.Context, s entity.Survey) error
+	repository.Survey
+	WithTransactionMock func(ctx context.Context, repos []repository.Transactional, exec func(repos []repository.Transactional) error) error
+	CountMock           func(ctx context.Context) (int, error)
+	FindMock            func(ctx context.Context, limit, offset int) ([]entity.Survey, error)
+	FindByMock          func(ctx context.Context, id string) (entity.Survey, error)
+	CreateMock          func(ctx context.Context, s entity.Survey) (entity.Survey, error)
+	DeleteMock          func(ctx context.Context, s entity.Survey) error
+}
+
+func (r *surveyRepoMock) WithTransaction(
+	ctx context.Context, repos []repository.Transactional, exec func(repos []repository.Transactional) error,
+) error {
+	return r.WithTransactionMock(ctx, repos, exec)
 }
 
 func (r *surveyRepoMock) Count(ctx context.Context) (int, error) {

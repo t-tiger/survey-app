@@ -21,3 +21,32 @@ func TestSurvey_OptionIDs(t *testing.T) {
 	actual := s.OptionIDs()
 	assert.Equal(t, []string{"o1", "o2", "o3"}, actual)
 }
+
+func TestSurvey_HasAnswer(t *testing.T) {
+	tests := []struct {
+		name string
+		s    Survey
+		want bool
+	}{
+		{
+			name: "has answer",
+			s: Survey{Questions: []Question{
+				{Options: []Option{{}}},
+				{Options: []Option{{ID: "o1", Answers: []Answer{{OptionID: "o1"}}}}},
+			}},
+			want: true,
+		},
+		{
+			name: "missing answer",
+			s: Survey{Questions: []Question{
+				{Options: []Option{{ID: "o1", Answers: []Answer{}}}}},
+			},
+			want: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, tt.s.HasAnswer())
+		})
+	}
+}

@@ -24,8 +24,9 @@ func New(db *gorm.DB) http.Handler {
 	surveyCreateUsecase := usecase.NewSurveyCreate(surveyRepo)
 	surveyDeleteUsecase := usecase.NewSurveyDelete(surveyRepo)
 	surveyFetchListUsecase := usecase.NewSurveyFetchList(surveyRepo)
+	surveyUpdateUsecase := usecase.NewSurveyUpdate(surveyRepo)
 	surveyHandler := handler.NewSurvey(
-		surveyCreateUsecase, surveyDeleteUsecase, surveyFetchListUsecase,
+		surveyCreateUsecase, surveyDeleteUsecase, surveyFetchListUsecase, surveyUpdateUsecase,
 	)
 
 	r.Post("/login", userHandler.Login)
@@ -36,6 +37,7 @@ func New(db *gorm.DB) http.Handler {
 	r.Group(func(r chi.Router) {
 		r.Use(handler.AuthUser)
 		r.Post("/surveys", surveyHandler.Create)
+		r.Put("/surveys/{id}", surveyHandler.Update)
 		r.Delete("/surveys/{id}", surveyHandler.Delete)
 	})
 
