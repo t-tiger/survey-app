@@ -21,8 +21,9 @@ func New(db *gorm.DB) http.Handler {
 	userHandler := handler.NewUser(userAuthUsecase, userCreateUsecase)
 
 	surveyRepo := persistence.NewSurvey(db)
+	surveyCreateUsecase := usecase.NewSurveyCreate(surveyRepo)
 	surveyFetchListUsecase := usecase.NewSurveyFetchList(surveyRepo)
-	surveyHandler := handler.NewSurvey(surveyFetchListUsecase)
+	surveyHandler := handler.NewSurvey(surveyCreateUsecase, surveyFetchListUsecase)
 
 	r.Post("/login", userHandler.Login)
 	r.Post("/users", userHandler.Create)

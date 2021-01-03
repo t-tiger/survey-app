@@ -12,8 +12,9 @@ import (
 
 type surveyRepoMock struct {
 	repository.Survey
-	CountMock func(ctx context.Context) (int, error)
-	FindMock  func(ctx context.Context, limit, offset int) ([]entity.Survey, error)
+	CountMock  func(ctx context.Context) (int, error)
+	FindMock   func(ctx context.Context, limit, offset int) ([]entity.Survey, error)
+	CreateMock func(ctx context.Context, s entity.Survey) (entity.Survey, error)
 }
 
 func (r *surveyRepoMock) Count(ctx context.Context) (int, error) {
@@ -24,12 +25,16 @@ func (r *surveyRepoMock) Find(ctx context.Context, limit, offset int) ([]entity.
 	return r.FindMock(ctx, limit, offset)
 }
 
+func (r *surveyRepoMock) Create(ctx context.Context, s entity.Survey) (entity.Survey, error) {
+	return r.CreateMock(ctx, s)
+}
+
 func TestSurveyFetchList_Call(t *testing.T) {
 	repo := &surveyRepoMock{
-		CountMock: func(ctx context.Context) (int, error) {
+		CountMock: func(_ context.Context) (int, error) {
 			return 5, nil
 		},
-		FindMock: func(ctx context.Context, limit, offset int) ([]entity.Survey, error) {
+		FindMock: func(_ context.Context, _, _ int) ([]entity.Survey, error) {
 			return []entity.Survey{{ID: "s1"}, {ID: "s2"}}, nil
 		},
 	}

@@ -49,3 +49,10 @@ func (p *Survey) Find(ctx context.Context, limit, offset int) ([]entity.Survey, 
 	}
 	return surveys, nil
 }
+
+func (p *Survey) Create(ctx context.Context, s entity.Survey) (entity.Survey, error) {
+	if err := p.db.WithContext(ctx).Create(&s).Error; err != nil {
+		return entity.Survey{}, cerrors.Errorf(cerrors.DatabaseErr, err.Error())
+	}
+	return s, nil
+}

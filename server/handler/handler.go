@@ -8,12 +8,16 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
+	"github.com/gorilla/schema"
 	"github.com/prometheus/common/log"
 	"github.com/t-tiger/survey/server/cerrors"
 	"github.com/t-tiger/survey/server/config"
 )
 
 const ctxUserID = "userID"
+
+// decoder declares globally for the sake of caching
+var decoder = schema.NewDecoder()
 
 func handleError(err error, w http.ResponseWriter) {
 	log.Error(err.Error())
