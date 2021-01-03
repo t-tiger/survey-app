@@ -5,9 +5,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/t-tiger/survey/server/entity"
-
 	"github.com/go-chi/render"
+	"github.com/t-tiger/survey/server/entity"
 	"github.com/t-tiger/survey/server/usecase"
 )
 

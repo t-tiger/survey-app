@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/t-tiger/survey/server/cerrors"
-
 	"github.com/t-tiger/survey/server/entity"
 	"github.com/t-tiger/survey/server/repository"
 )

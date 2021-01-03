@@ -5,7 +5,6 @@ import (
 	"sort"
 
 	"github.com/t-tiger/survey/server/cerrors"
-
 	"github.com/t-tiger/survey/server/entity"
 	"gorm.io/gorm"
 )
