@@ -8,5 +8,6 @@ import (
 
 type Respondent interface {
 	FindBy(ctx context.Context, sID, email, name string) (*entity.Respondent, error)
+	FindBySurveyIDsWithUserInfo(ctx context.Context, sIDs []string, email, name string) ([]entity.Respondent, error)
 	Create(ctx context.Context, r entity.Respondent) (entity.Respondent, error)
 }

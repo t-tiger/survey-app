@@ -10,12 +10,17 @@ import (
 )
 
 type respondentMockRepo struct {
-	FindByMock func(ctx context.Context, sID, email, name string) (*entity.Respondent, error)
-	CreateMock func(ctx context.Context, r entity.Respondent) (entity.Respondent, error)
+	FindByMock                      func(ctx context.Context, sID, email, name string) (*entity.Respondent, error)
+	FindBySurveyIDsWithUserInfoMock func(ctx context.Context, sIDs []string, email, name string) ([]entity.Respondent, error)
+	CreateMock                      func(ctx context.Context, r entity.Respondent) (entity.Respondent, error)
 }
 
 func (r *respondentMockRepo) FindBy(ctx context.Context, sID, email, name string) (*entity.Respondent, error) {
 	return r.FindByMock(ctx, sID, email, name)
+}
+
+func (r *respondentMockRepo) FindBySurveyIDsWithUserInfo(ctx context.Context, sIDs []string, email, name string) ([]entity.Respondent, error) {
+	return r.FindBySurveyIDsWithUserInfoMock(ctx, sIDs, email, name)
 }
 
 func (r *respondentMockRepo) Create(ctx context.Context, res entity.Respondent) (entity.Respondent, error) {

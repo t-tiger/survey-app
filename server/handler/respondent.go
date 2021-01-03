@@ -3,17 +3,61 @@ package handler
 import (
 	"encoding/json"
 	"net/http"
+	"strings"
 
+	"github.com/go-chi/render"
 	"github.com/t-tiger/survey/server/entity"
 	"github.com/t-tiger/survey/server/usecase"
 )
 
 type Respondent struct {
 	createUsecase *usecase.RespondentCreate
+	listUsecase   *usecase.RespondentFetchList
 }
 
-func NewRespondent(createUsecase *usecase.RespondentCreate) *Respondent {
-	return &Respondent{createUsecase: createUsecase}
+func NewRespondent(
+	createUsecase *usecase.RespondentCreate,
+	listUsecase *usecase.RespondentFetchList,
+) *Respondent {
+	return &Respondent{
+		createUsecase: createUsecase,
+		listUsecase:   listUsecase,
+	}
+}
+
+type respondentListRequest struct {
+	Email     string   `json:"email"`
+	Name      string   `json:"name"`
+	SurveyIDs []string `json:"surveyIds"`
+}
+
+type respondentResponse struct {
+	ID       string `json:"id"`
+	SurveyID string `json:"survey_id"`
+}
+
+func (h *Respondent) List(w http.ResponseWriter, r *http.Request) {
+	// split comma separated surveyIDs
+	q := r.URL.Query()
+	if v, ok := q["surveyIds"]; ok {
+		q["surveyIds"] = strings.Split(v[0], ",")
+	}
+	var req respondentListRequest
+	if err := decoder.Decode(&req, q); err != nil {
+		handleError(err, w)
+		return
+	}
+	rs, err := h.listUsecase.Call(r.Context(), req.SurveyIDs, req.Email, req.Name)
+	if err != nil {
+		handleError(err, w)
+		return
+	}
+	// build response value
+	res := make([]respondentResponse, len(rs))
+	for i, rr := range rs {
+		res[i] = newRespondentResponse(rr)
+	}
+	render.JSON(w, r, res)
 }
 
 type respondentCreateRequest struct {
@@ -29,12 +73,13 @@ func (h *Respondent) Create(w http.ResponseWriter, r *http.Request) {
 		handleError(err, w)
 		return
 	}
-	_, err := h.createUsecase.Call(r.Context(), req.toRespondent())
+	rr, err := h.createUsecase.Call(r.Context(), req.toRespondent())
 	if err != nil {
 		handleError(err, w)
 		return
 	}
 	w.WriteHeader(http.StatusCreated)
+	render.JSON(w, r, newRespondentResponse(rr))
 }
 
 // toRespondent builds entity.Respondent from request
@@ -49,4 +94,12 @@ func (r *respondentCreateRequest) toRespondent() entity.Respondent {
 		res.Answers[i] = entity.Answer{OptionID: oID}
 	}
 	return res
+}
+
+// newRespondentResponse builds respondentResponse from entity.Respondent
+func newRespondentResponse(r entity.Respondent) respondentResponse {
+	return respondentResponse{
+		ID:       r.ID,
+		SurveyID: r.SurveyID,
+	}
 }

@@ -30,6 +30,17 @@ func (p *Respondent) FindBy(ctx context.Context, sID, email, name string) (*enti
 	return &u, nil
 }
 
+func (p *Respondent) FindBySurveyIDsWithUserInfo(ctx context.Context, sIDs []string, email, name string) ([]entity.Respondent, error) {
+	var rs []entity.Respondent
+	err := p.db.WithContext(ctx).Where("survey_id in (?)", sIDs).
+		Where(&entity.Respondent{Email: email, Name: name}).
+		Order("created_at desc").Find(&rs).Error
+	if err != nil {
+		return nil, cerrors.Errorf(cerrors.DatabaseErr, err.Error())
+	}
+	return rs, nil
+}
+
 func (p *Respondent) Create(ctx context.Context, r entity.Respondent) (entity.Respondent, error) {
 	if err := p.db.WithContext(ctx).Create(&r).Error; err != nil {
 		return entity.Respondent{}, cerrors.Errorf(cerrors.DatabaseErr, err.Error())
