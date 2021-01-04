@@ -7,20 +7,25 @@ import { useToggleDialog } from 'utils/dialog'
 
 import AppContext from 'components/pages/AppContext'
 import AuthDialog from "components/organisms/AuthDialog/Index";
+import { useMessageCenter } from "utils/messageCenter";
 
 type Props = {
   title: ReactNode
 }
 
 const Header: React.FC<Props> = ({ title }) => {
-  const { userId } = useContext(AppContext)
+  const { userId, clearUserId } = useContext(AppContext)
+  const {showMessage} = useMessageCenter()
   const [
     authDialogKey,
     isOpenAuthDialog,
     setOpenAuthDialog,
   ] = useToggleDialog()
 
-  const handleLogOutClick = () => {}
+  const handleLogOutClick = () => {
+    clearUserId()
+    showMessage('success', 'Logged out successfully.')
+  }
   const handleSignUpClick = () => {
     setOpenAuthDialog(true)
   }

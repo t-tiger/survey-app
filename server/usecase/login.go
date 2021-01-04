@@ -28,7 +28,7 @@ func (u *Login) Call(ctx context.Context, email, password string) (entity.User, 
 	// compare password
 	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordDigest), []byte(password))
 	if err != nil {
-		return entity.User{}, cerrors.Errorf(cerrors.InvalidInput, "password is wrong")
+		return entity.User{}, cerrors.Errorf(cerrors.InvalidInput, "failed to authenticate")
 	}
 	return *user, nil
 }

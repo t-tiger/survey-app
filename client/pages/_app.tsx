@@ -4,7 +4,6 @@ import { AppProps } from 'next/app'
 import { CssBaseline, ThemeProvider } from '@material-ui/core'
 
 import { mainTheme } from 'const/theme'
-import { getAuthStatus, setAuthStatus } from 'utils/session'
 import { fetchAuthState } from 'modules/user/api'
 
 import { MessageCenterProvider } from 'utils/messageCenter'
@@ -35,19 +34,11 @@ const Root: React.FC<RootProps> = ({ Component, pageProps }) => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      // check state from sessionStorage
-      const authStatus = getAuthStatus()
-      if (authStatus) {
-        setUserId(authStatus.userId)
-        setReady(true)
-      }
-
-      // check state from api
       try {
         const {
           data: { user },
         } = await fetchAuthState()
-        setAuthStatus({ checked: true, userId: user?.id })
+        setUserId(user?.id)
       } finally {
         setReady(true)
       }

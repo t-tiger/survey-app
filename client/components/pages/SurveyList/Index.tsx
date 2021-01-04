@@ -20,7 +20,7 @@ const Index: React.FC = () => {
       } = await fetchSurveyList(page, 30)
       setSurveys(items)
     } catch {
-      showMessage('error', 'failed to fetch survey list')
+      showMessage('error', 'Failed to fetch survey list.')
     } finally {
       setReady(true)
     }

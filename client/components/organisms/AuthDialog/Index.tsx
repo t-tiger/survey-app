@@ -26,10 +26,14 @@ const AuthDialog: React.FC<Props> = ({ open, onClose }) => {
         indicatorColor="primary"
         textColor="primary"
       >
-        <Tab label="SignUp" />
-        <Tab label="SignIn" />
+        <Tab label="Sign Up" />
+        <Tab label="Sign In" />
       </Tabs>
-      {menu === 0 ? <SignUpMenu /> : <SignInMenu />}
+      {menu === 0 ? (
+        <SignUpMenu onFinish={onClose} />
+      ) : (
+        <SignInMenu onFinish={onClose} />
+      )}
     </Dialog>
   )
 }
