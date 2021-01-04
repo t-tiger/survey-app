@@ -1,10 +1,15 @@
 import axios, { AxiosResponse } from 'axios'
 
 import { API_ENDPOINT } from 'const/index'
+import { Survey } from 'modules/survey/types'
 
 type SurveyList = {
-  authorized: boolean
+  total_count: number
+  items: Survey[]
 }
 
-export const fetchAuthState = (): Promise<AxiosResponse<SurveyList>> =>
-  axios.get(`${API_ENDPOINT}/check_auth`)
+export const fetchSurveyList = (
+  page: number,
+  count: number,
+): Promise<AxiosResponse<SurveyList>> =>
+  axios.get(`${API_ENDPOINT}/surveys`, { params: { page, count } })

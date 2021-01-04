@@ -1,21 +1,82 @@
-import React, { ReactNode } from 'react'
+import React, { ReactNode, useContext } from 'react'
+import styled from 'styled-components'
 
-import { AppBar, Toolbar, Typography } from '@material-ui/core'
+import { AppBar, Button, Toolbar, Typography } from '@material-ui/core'
+
+import { useToggleDialog } from 'utils/dialog'
+
+import AppContext from 'components/pages/AppContext'
+import AuthDialog from "components/organisms/AuthDialog/Index";
 
 type Props = {
   title: ReactNode
 }
 
 const Header: React.FC<Props> = ({ title }) => {
+  const { userId } = useContext(AppContext)
+  const [
+    authDialogKey,
+    isOpenAuthDialog,
+    setOpenAuthDialog,
+  ] = useToggleDialog()
+
+  const handleLogOutClick = () => {}
+  const handleSignUpClick = () => {
+    setOpenAuthDialog(true)
+  }
+
   return (
-    <AppBar position="sticky" color="primary">
-      <Toolbar>
-        <Typography variant="h6" noWrap>
-          {title}
-        </Typography>
-      </Toolbar>
-    </AppBar>
+    <>
+      <AppBar position="sticky" color="primary">
+        <Toolbar>
+          <ToolbarInner>
+            <Typography variant="h6" noWrap>
+              {title}
+            </Typography>
+            <MenuContainer>
+              {userId ? (
+                <Button
+                  color="inherit"
+                  variant="outlined"
+                  onClick={handleLogOutClick}
+                >
+                  Log out
+                </Button>
+              ) : (
+                <Button
+                  color="inherit"
+                  variant="outlined"
+                  onClick={handleSignUpClick}
+                >
+                  Sign Up
+                </Button>
+              )}
+            </MenuContainer>
+          </ToolbarInner>
+        </Toolbar>
+      </AppBar>
+      <AuthDialog
+        key={authDialogKey}
+        open={isOpenAuthDialog}
+        onClose={() => setOpenAuthDialog(false)}
+      />
+    </>
   )
 }
+
+const ToolbarInner = styled.div`
+  display: flex;
+  flex-grow: 1;
+  max-width: 1000px;
+  margin: auto;
+`
+
+const MenuContainer = styled.div`
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-left: 15px;
+`
 
 export default Header

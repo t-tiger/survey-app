@@ -5,12 +5,11 @@ import { AppProps } from 'next/app'
 import { CssBaseline, ThemeProvider } from '@material-ui/core'
 
 import { mainTheme } from 'const/theme'
-import { fetchAuthState } from 'modules/auth/api'
+import { deleteAuthSession, getAuthStatus, setAuthStatus } from 'utils/session'
+import { fetchAuthState } from 'modules/user/api'
 
-import { MessageCenterProvider, useMessageCenter } from 'utils/messageCenter'
+import { MessageCenterProvider } from 'utils/messageCenter'
 import { AppContextProvider } from 'components/pages/AppContext'
-import InitialLoading from 'components/atoms/InitialLoading'
-import DefaultTemplate from 'components/templates/DefaultTemplate'
 
 const App: React.FC<AppProps> = ({ Component, pageProps }) => {
   useEffect(() => {
@@ -32,35 +31,36 @@ const App: React.FC<AppProps> = ({ Component, pageProps }) => {
 type RootProps = Pick<AppProps, 'Component' | 'pageProps'>
 
 const Root: React.FC<RootProps> = ({ Component, pageProps }) => {
-  const [authorized, setAuthorized] = useState<boolean>()
-  const { showMessage } = useMessageCenter()
+  const [ready, setReady] = useState(false)
+  const [userId, setUserId] = useState<string>()
 
   useEffect(() => {
-    // check authorized status
     const checkAuth = async () => {
+      // check state from sessionStorage
+      const authStatus = getAuthStatus()
+      if (authStatus) {
+        setUserId(authStatus.userId)
+        setReady(true)
+      }
+
+      // check state from api
       try {
         const {
-          data: { authorized },
+          data: { user },
         } = await fetchAuthState()
-        setAuthorized(authorized)
-      } catch (e) {
-        console.error(e)
-        showMessage('error', 'failed to fetch authorization status')
+        setAuthStatus({ checked: true, userId: user?.id })
+      } finally {
+        setReady(true)
       }
     }
     checkAuth()
   }, [])
 
-  if (authorized === undefined) {
-    return (
-      <DefaultTemplate title="Surveys" {...pageProps}>
-        <InitialLoading />
-      </DefaultTemplate>
-    )
+  if (!ready) {
+    return null
   }
-
   return (
-    <AppContextProvider authorized={authorized}>
+    <AppContextProvider userId={userId}>
       <Component {...pageProps} />
     </AppContextProvider>
   )

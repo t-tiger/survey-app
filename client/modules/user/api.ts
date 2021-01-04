@@ -1,9 +1,10 @@
 import axios, { AxiosResponse } from 'axios'
 
 import { API_ENDPOINT } from 'const/index'
+import { User } from 'modules/user/types'
 
 type AuthState = {
-  authorized: boolean
+  user: User | null
 }
 
 export const fetchAuthState = (): Promise<AxiosResponse<AuthState>> =>
