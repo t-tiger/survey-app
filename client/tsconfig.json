@@ -16,7 +16,10 @@
     "isolatedModules": true,
     "baseUrl": ".",
     "paths": {
+      "const/*": ["./const/*"],
+      "components/*": ["./components/*"],
       "pages/*": ["./pages/*"],
+      "utils/*": ["./utils/*"],
     }
   },
   "exclude": ["node_modules"],

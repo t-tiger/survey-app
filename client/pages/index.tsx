@@ -1,3 +1,1 @@
-export default function Home() {
-  return <div>test</div>
-}
+export { default } from 'components/pages/SurveyList'
