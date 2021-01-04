@@ -9,15 +9,15 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type UserAuth struct {
+type Login struct {
 	repo repository.User
 }
 
-func NewUserAuth(repo repository.User) *UserAuth {
-	return &UserAuth{repo: repo}
+func NewLogin(repo repository.User) *Login {
+	return &Login{repo: repo}
 }
 
-func (u *UserAuth) Call(ctx context.Context, email, password string) (entity.User, error) {
+func (u *Login) Call(ctx context.Context, email, password string) (entity.User, error) {
 	user, err := u.repo.FindBy(ctx, email)
 	if err != nil {
 		return entity.User{}, cerrors.Errorf(cerrors.Unexpected, err.Error())

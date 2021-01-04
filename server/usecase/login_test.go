@@ -11,7 +11,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func TestUserAuth_Call(t *testing.T) {
+func TestLogin_Call(t *testing.T) {
 	// initialize appropriate password
 	pw := []byte("foobar")
 	pwDigest, err := bcrypt.GenerateFromPassword(pw, passWordDigestCost)
@@ -58,7 +58,7 @@ func TestUserAuth_Call(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			u := NewUserAuth(repo)
+			u := NewLogin(repo)
 			user, err := u.Call(context.Background(), tt.email, tt.password)
 			if err != nil {
 				assert.EqualError(t, tt.wantErr, err.Error())

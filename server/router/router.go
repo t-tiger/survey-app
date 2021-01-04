@@ -16,9 +16,11 @@ func New(db *gorm.DB) http.Handler {
 	r.Use(middleware.Logger)
 
 	userRepo := persistence.NewUser(db)
-	userAuthUsecase := usecase.NewUserAuth(userRepo)
+	loginUsecase := usecase.NewLogin(userRepo)
+	authHandler := handler.NewAuth(loginUsecase)
+
 	userCreateUsecase := usecase.NewUserCreate(userRepo)
-	userHandler := handler.NewUser(userAuthUsecase, userCreateUsecase)
+	userHandler := handler.NewUser(userCreateUsecase)
 
 	surveyRepo := persistence.NewSurvey(db)
 	surveyCreateUsecase := usecase.NewSurveyCreate(surveyRepo)
@@ -34,7 +36,8 @@ func New(db *gorm.DB) http.Handler {
 	respondentFetchListUsecase := usecase.NewRespondentFetchList(respondentRepo)
 	respondentHandler := handler.NewRespondent(respondentCreateUsecase, respondentFetchListUsecase)
 
-	r.Post("/login", userHandler.Login)
+	r.Get("/check_auth", authHandler.CheckAuth)
+	r.Post("/login", authHandler.Login)
 	r.Post("/users", userHandler.Create)
 	r.Get("/surveys", surveyHandler.List)
 	r.Get("/respondents", respondentHandler.List)

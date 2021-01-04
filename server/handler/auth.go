@@ -2,18 +2,68 @@ package handler
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
+	"github.com/go-chi/render"
 	"github.com/t-tiger/survey/server/cerrors"
 	"github.com/t-tiger/survey/server/config"
+	"github.com/t-tiger/survey/server/entity"
+	"github.com/t-tiger/survey/server/usecase"
 )
 
 const (
 	ctxUserID       = "userID"
 	tokenCookieName = "_survey_app_token"
 )
+
+type Auth struct {
+	loginUsecase *usecase.Login
+}
+
+func NewAuth(loginUsecase *usecase.Login) *Auth {
+	return &Auth{loginUsecase: loginUsecase}
+}
+
+type checkAuthResponse struct {
+	Authorized bool `json:"authorized"`
+}
+
+func (h *Auth) CheckAuth(w http.ResponseWriter, r *http.Request) {
+	authorized := retrieveUserID(r) != nil
+	render.JSON(w, r, &checkAuthResponse{Authorized: authorized})
+}
+
+type loginRequest struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+type loginResponse struct {
+	User entity.User `json:"user"`
+}
+
+func (h *Auth) Login(w http.ResponseWriter, r *http.Request) {
+	var req loginRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		handleError(err, w)
+		return
+	}
+	user, err := h.loginUsecase.Call(r.Context(), req.Email, req.Password)
+	if err != nil {
+		handleError(err, w)
+		return
+	}
+	token, err := createToken(user.ID)
+	if err != nil {
+		handleError(err, w)
+		return
+	}
+	setTokenToCookie(w, token)
+	render.JSON(w, r, &loginResponse{User: user})
+}
 
 // createToken generates json web token
 func createToken(userID string) (string, error) {
