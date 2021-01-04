@@ -3,6 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 
 	"github.com/go-chi/render"
 	"github.com/t-tiger/survey/server/entity"
@@ -27,8 +28,7 @@ type userLoginRequest struct {
 }
 
 type userLoginResponse struct {
-	Token string      `json:"token"`
-	User  entity.User `json:"user"`
+	User entity.User `json:"user"`
 }
 
 func (h *User) Login(w http.ResponseWriter, r *http.Request) {
@@ -47,8 +47,8 @@ func (h *User) Login(w http.ResponseWriter, r *http.Request) {
 		handleError(err, w)
 		return
 	}
-	res := userLoginResponse{Token: token, User: user}
-	render.JSON(w, r, &res)
+	setTokenToCookie(w, token)
+	render.JSON(w, r, &userLoginResponse{User: user})
 }
 
 type userCreateRequest struct {
@@ -75,6 +75,12 @@ func (h *User) Create(w http.ResponseWriter, r *http.Request) {
 		handleError(err, w)
 		return
 	}
-	res := userCreateResponse{Token: token, User: user}
-	render.JSON(w, r, &res)
+	setTokenToCookie(w, token)
+	render.JSON(w, r, &userCreateResponse{User: user})
+}
+
+func setTokenToCookie(w http.ResponseWriter, token string) {
+	exp := time.Now().Add(24 * time.Hour)
+	c := &http.Cookie{Name: tokenCookieName, Value: token, Path: "/", Expires: exp, HttpOnly: true}
+	http.SetCookie(w, c)
 }

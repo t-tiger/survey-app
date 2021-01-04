@@ -3,7 +3,6 @@ package handler
 import (
 	"context"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -11,7 +10,10 @@ import (
 	"github.com/t-tiger/survey/server/config"
 )
 
-const ctxUserID = "userID"
+const (
+	ctxUserID       = "userID"
+	tokenCookieName = "_survey_app_token"
+)
 
 // createToken generates json web token
 func createToken(userID string) (string, error) {
@@ -28,15 +30,18 @@ func createToken(userID string) (string, error) {
 
 // retrieveUserID returns userID by decoding jwt with Authorization value
 func retrieveUserID(r *http.Request) *string {
-	authHead := r.Header.Get("Authorization")
-	if len(authHead) == 0 {
+	cookie, err := r.Cookie(tokenCookieName)
+	if err != nil {
 		return nil
 	}
-	tokenStr := strings.Replace(authHead, "Bearer ", "", 1)
+	tokenStr := cookie.Value
+	if len(tokenStr) == 0 {
+		return nil
+	}
 
 	// decode json web token
 	c := jwt.MapClaims{}
-	_, err := jwt.ParseWithClaims(tokenStr, c, func(t *jwt.Token) (interface{}, error) {
+	_, err = jwt.ParseWithClaims(tokenStr, c, func(t *jwt.Token) (interface{}, error) {
 		return []byte(config.Config.SecretKey), nil
 	})
 	if err != nil {
