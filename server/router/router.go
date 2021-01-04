@@ -5,6 +5,8 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
+	"github.com/go-chi/cors"
+	"github.com/t-tiger/survey/server/config"
 	"github.com/t-tiger/survey/server/handler"
 	"github.com/t-tiger/survey/server/persistence"
 	"github.com/t-tiger/survey/server/usecase"
@@ -14,6 +16,9 @@ import (
 func New(db *gorm.DB) http.Handler {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
+	r.Use(cors.Handler(cors.Options{
+		AllowedOrigins: config.Config.AllowedOrigins,
+	}))
 
 	userRepo := persistence.NewUser(db)
 	loginUsecase := usecase.NewLogin(userRepo)
