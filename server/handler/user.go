@@ -3,7 +3,6 @@ package handler
 import (
 	"encoding/json"
 	"net/http"
-	"time"
 
 	"github.com/go-chi/render"
 	"github.com/t-tiger/survey/server/entity"
@@ -46,10 +45,4 @@ func (h *User) Create(w http.ResponseWriter, r *http.Request) {
 	}
 	setTokenToCookie(w, token)
 	render.JSON(w, r, &userCreateResponse{User: user})
-}
-
-func setTokenToCookie(w http.ResponseWriter, token string) {
-	exp := time.Now().Add(24 * time.Hour)
-	c := &http.Cookie{Name: tokenCookieName, Value: token, Path: "/", Expires: exp, HttpOnly: true}
-	http.SetCookie(w, c)
 }

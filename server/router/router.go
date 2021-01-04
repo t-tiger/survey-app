@@ -17,7 +17,8 @@ func New(db *gorm.DB) http.Handler {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 	r.Use(cors.Handler(cors.Options{
-		AllowedOrigins: config.Config.AllowedOrigins,
+		AllowedOrigins:   config.Config.AllowedOrigins,
+		AllowCredentials: true,
 	}))
 
 	userRepo := persistence.NewUser(db)

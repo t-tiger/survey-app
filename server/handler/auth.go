@@ -112,6 +112,12 @@ func retrieveUserID(r *http.Request) *string {
 	return nil
 }
 
+func setTokenToCookie(w http.ResponseWriter, token string) {
+	exp := time.Now().Add(24 * time.Hour)
+	c := &http.Cookie{Name: tokenCookieName, Value: token, Path: "/", Expires: exp, HttpOnly: true}
+	http.SetCookie(w, c)
+}
+
 func AuthUser(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		userID := retrieveUserID(r)
