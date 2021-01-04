@@ -19,6 +19,8 @@ func handleError(err error, w http.ResponseWriter) {
 	message := err.Error()
 	reason := cerrors.GetReason(err)
 	switch reason {
+	case cerrors.InvalidInput:
+		w.WriteHeader(http.StatusBadRequest)
 	case cerrors.Unauthorized:
 		w.WriteHeader(http.StatusUnauthorized)
 	case cerrors.Forbidden:
@@ -28,8 +30,6 @@ func handleError(err error, w http.ResponseWriter) {
 		w.WriteHeader(http.StatusNotFound)
 	case cerrors.Duplicated:
 		w.WriteHeader(http.StatusConflict)
-	case cerrors.InvalidInput:
-		w.WriteHeader(http.StatusUnprocessableEntity)
 	default:
 		message = "internal server error"
 		w.WriteHeader(http.StatusInternalServerError)
