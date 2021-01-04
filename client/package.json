@@ -3,12 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "API_ENDPOINT=http://localhost:8080 next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint \"./{components/**/,pages/**/,const/**/,}*.{js,ts,tsx}\" --quiet",
+    "lint": "eslint \"./{const/**/,components/**/,modules/**/,pages/**/,utils/**/,}*.{js,ts,tsx}\" --quiet",
     "fix": "yarn lint --fix",
-    "fmt": "prettier --write \"./{components,pages,const}/**/*.{js,ts,tsx}\""
+    "fmt": "prettier --write \"./{components,const,modules,pages,utils}/**/*.{js,ts,tsx}\""
   },
   "dependencies": {
     "@material-ui/core": "^4.11.2",

@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "lib": ["dom"],
+    "lib": ["dom", "esnext"],
     "module": "commonjs",
     "jsx": "preserve",
     "strict": true,
@@ -18,8 +18,9 @@
     "paths": {
       "const/*": ["./const/*"],
       "components/*": ["./components/*"],
+      "modules/*": ["./modules/*"],
       "pages/*": ["./pages/*"],
-      "utils/*": ["./utils/*"],
+      "utils/*": ["./utils/*"]
     }
   },
   "exclude": ["node_modules"],
