@@ -1,10 +1,6 @@
 import { createMuiTheme } from '@material-ui/core'
 
-import {
-  SOFT_RED,
-  LIGHT_GRAYISH_BLUE,
-  BLUE_RIGHT,
-} from 'const/color'
+import { SOFT_RED, LIGHT_GRAYISH_BLUE, BLUE_RIGHT } from 'const/color'
 
 export const mainTheme = createMuiTheme({
   palette: {

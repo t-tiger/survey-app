@@ -13,6 +13,7 @@ const App = ({ Component, pageProps }: AppProps): ReactElement => {
     jssStyles?.parentElement?.removeChild(jssStyles)
   }, [])
 
+  /* eslint-disable react/jsx-props-no-spreading */
   return (
     <ThemeProvider theme={mainTheme}>
       <MessageCenterProvider>
