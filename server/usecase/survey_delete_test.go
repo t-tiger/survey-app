@@ -38,7 +38,7 @@ func TestSurveyDelete_Call(t *testing.T) {
 			name:    "publisher_id is different",
 			id:      "s1",
 			userID:  "u2",
-			wantErr: cerrors.Errorf(cerrors.Forbidden, "prohibited to delete survey"),
+			wantErr: cerrors.Errorf(cerrors.Forbidden, "you don't have permission to delete"),
 		},
 		{
 			name:    "succeed to delete",

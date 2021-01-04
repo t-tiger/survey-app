@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -25,7 +26,12 @@ func TestSurveyCreate_Call(t *testing.T) {
 		{
 			name:    "survey title is blank",
 			s:       entity.Survey{Title: ""},
-			wantErr: cerrors.Errorf(cerrors.InvalidInput, "survey title must be present"),
+			wantErr: cerrors.Errorf(cerrors.InvalidInput, "length of survey title must be between 1 and 100"),
+		},
+		{
+			name:    "length of survey title exceeds 100",
+			s:       entity.Survey{Title: strings.Repeat("a", 101)},
+			wantErr: cerrors.Errorf(cerrors.InvalidInput, "length of survey title must be between 1 and 100"),
 		},
 		{
 			name:    "question is empty",
@@ -35,7 +41,12 @@ func TestSurveyCreate_Call(t *testing.T) {
 		{
 			name:    "question title is blank",
 			s:       entity.Survey{Title: "s1", Questions: []entity.Question{{Title: ""}}},
-			wantErr: cerrors.Errorf(cerrors.InvalidInput, "question title must be present"),
+			wantErr: cerrors.Errorf(cerrors.InvalidInput, "length of question title must be between 1 and 100"),
+		},
+		{
+			name:    "length of question title exceeds 100",
+			s:       entity.Survey{Title: "s1", Questions: []entity.Question{{Title: strings.Repeat("a", 101)}}},
+			wantErr: cerrors.Errorf(cerrors.InvalidInput, "length of question title must be between 1 and 100"),
 		},
 		{
 			name: "option is empty",
@@ -57,7 +68,17 @@ func TestSurveyCreate_Call(t *testing.T) {
 					{Title: "q2", Options: []entity.Option{{Title: ""}}},
 				},
 			},
-			wantErr: cerrors.Errorf(cerrors.InvalidInput, "option title must be present"),
+			wantErr: cerrors.Errorf(cerrors.InvalidInput, "length of option title must be between 1 and 100"),
+		},
+		{
+			name: "length of option title exceeds 100",
+			s: entity.Survey{
+				Title: "s1",
+				Questions: []entity.Question{
+					{Title: "q1", Options: []entity.Option{{Title: strings.Repeat("a", 101)}}},
+				},
+			},
+			wantErr: cerrors.Errorf(cerrors.InvalidInput, "length of option title must be between 1 and 100"),
 		},
 		{
 			name: "succeed to create",

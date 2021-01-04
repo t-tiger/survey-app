@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"strings"
 	"testing"
 
 	"github.com/t-tiger/survey/server/repository"
@@ -53,7 +54,14 @@ func TestSurveyUpdate_Call(t *testing.T) {
 			s:       entity.Survey{ID: "s1", Title: ""},
 			userID:  "u1",
 			foundS:  survey,
-			wantErr: cerrors.Errorf(cerrors.InvalidInput, "survey title must be present"),
+			wantErr: cerrors.Errorf(cerrors.InvalidInput, "length of survey title must be between 1 and 100"),
+		},
+		{
+			name:    "length of survey title exceeds 100",
+			s:       entity.Survey{ID: "s1", Title: strings.Repeat("a", 101)},
+			userID:  "u1",
+			foundS:  survey,
+			wantErr: cerrors.Errorf(cerrors.InvalidInput, "length of survey title must be between 1 and 100"),
 		},
 		{
 			name:    "question is empty",
@@ -67,7 +75,14 @@ func TestSurveyUpdate_Call(t *testing.T) {
 			s:       entity.Survey{ID: "s1", Title: "s1", Questions: []entity.Question{{Title: ""}}},
 			userID:  "u1",
 			foundS:  survey,
-			wantErr: cerrors.Errorf(cerrors.InvalidInput, "question title must be present"),
+			wantErr: cerrors.Errorf(cerrors.InvalidInput, "length of question title must be between 1 and 100"),
+		},
+		{
+			name:    "length of question title exceeds 100",
+			s:       entity.Survey{ID: "s1", Title: "s1", Questions: []entity.Question{{Title: strings.Repeat("a", 101)}}},
+			userID:  "u1",
+			foundS:  survey,
+			wantErr: cerrors.Errorf(cerrors.InvalidInput, "length of question title must be between 1 and 100"),
 		},
 		{
 			name: "option is empty",
@@ -95,7 +110,20 @@ func TestSurveyUpdate_Call(t *testing.T) {
 			},
 			userID:  "u1",
 			foundS:  survey,
-			wantErr: cerrors.Errorf(cerrors.InvalidInput, "option title must be present"),
+			wantErr: cerrors.Errorf(cerrors.InvalidInput, "length of option title must be between 1 and 100"),
+		},
+		{
+			name: "length of option title exceeds 100",
+			s: entity.Survey{
+				ID:    "s1",
+				Title: "s1",
+				Questions: []entity.Question{
+					{Title: "q1", Options: []entity.Option{{Title: strings.Repeat("a", 101)}}},
+				},
+			},
+			userID:  "u1",
+			foundS:  survey,
+			wantErr: cerrors.Errorf(cerrors.InvalidInput, "length of option title must be between 1 and 100"),
 		},
 		{
 			name:    "succeed to update",
