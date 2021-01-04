@@ -1,13 +1,7 @@
 import React, { useState } from 'react'
 
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  Tab,
-  Tabs,
-} from '@material-ui/core'
+import { Dialog, Tab, Tabs } from '@material-ui/core'
+
 import SignUpMenu from 'components/organisms/AuthDialog/SignUpMenu'
 import SignInMenu from 'components/organisms/AuthDialog/SignInMenu'
 

@@ -1,11 +1,10 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import React, { useEffect, useState } from 'react'
 import { AppProps } from 'next/app'
 
 import { CssBaseline, ThemeProvider } from '@material-ui/core'
 
 import { mainTheme } from 'const/theme'
-import { deleteAuthSession, getAuthStatus, setAuthStatus } from 'utils/session'
+import { getAuthStatus, setAuthStatus } from 'utils/session'
 import { fetchAuthState } from 'modules/user/api'
 
 import { MessageCenterProvider } from 'utils/messageCenter'
