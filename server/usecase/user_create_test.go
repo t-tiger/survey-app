@@ -4,6 +4,8 @@ import (
 	"context"
 	"testing"
 
+	"github.com/t-tiger/survey/server/repository"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/t-tiger/survey/server/cerrors"
 	"github.com/t-tiger/survey/server/entity"
@@ -11,12 +13,13 @@ import (
 )
 
 type userRepoMock struct {
-	FindByMock func(ctx context.Context, email string) (*entity.User, error)
-	CreateMock func(ctx context.Context, name, email, password string) (entity.User, error)
+	repository.User
+	FindByEmailMock func(ctx context.Context, email string) (*entity.User, error)
+	CreateMock      func(ctx context.Context, name, email, password string) (entity.User, error)
 }
 
-func (r *userRepoMock) FindBy(ctx context.Context, email string) (*entity.User, error) {
-	return r.FindByMock(ctx, email)
+func (r *userRepoMock) FindByEmail(ctx context.Context, email string) (*entity.User, error) {
+	return r.FindByEmailMock(ctx, email)
 }
 
 func (r *userRepoMock) Create(ctx context.Context, name, email, password string) (entity.User, error) {
@@ -100,7 +103,7 @@ func TestUserCreate_Call(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			// mock repository
 			repo := &userRepoMock{
-				FindByMock: func(_ context.Context, email string) (*entity.User, error) {
+				FindByEmailMock: func(_ context.Context, email string) (*entity.User, error) {
 					if email == "test1@dummy.com" {
 						return &entity.User{Email: "test1@dummy.com"}, nil
 					}

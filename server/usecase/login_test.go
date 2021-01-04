@@ -19,7 +19,7 @@ func TestLogin_Call(t *testing.T) {
 
 	// mock repository
 	repo := &userRepoMock{
-		FindByMock: func(_ context.Context, email string) (*entity.User, error) {
+		FindByEmailMock: func(_ context.Context, email string) (*entity.User, error) {
 			if email == "test1@dummy.com" {
 				return &entity.User{Email: email, PasswordDigest: string(pwDigest)}, nil
 			}

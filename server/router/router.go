@@ -21,11 +21,12 @@ func New(db *gorm.DB) http.Handler {
 	}))
 
 	userRepo := persistence.NewUser(db)
-	loginUsecase := usecase.NewLogin(userRepo)
-	authHandler := handler.NewAuth(loginUsecase)
-
 	userCreateUsecase := usecase.NewUserCreate(userRepo)
 	userHandler := handler.NewUser(userCreateUsecase)
+
+	userFindUsecase := usecase.NewUserFind(userRepo)
+	loginUsecase := usecase.NewLogin(userRepo)
+	authHandler := handler.NewAuth(userFindUsecase, loginUsecase)
 
 	surveyRepo := persistence.NewSurvey(db)
 	surveyCreateUsecase := usecase.NewSurveyCreate(surveyRepo)

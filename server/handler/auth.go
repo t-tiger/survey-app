@@ -20,20 +20,29 @@ const (
 )
 
 type Auth struct {
-	loginUsecase *usecase.Login
+	userFindUsecase *usecase.UserFind
+	loginUsecase    *usecase.Login
 }
 
-func NewAuth(loginUsecase *usecase.Login) *Auth {
-	return &Auth{loginUsecase: loginUsecase}
+func NewAuth(userFindUsecase *usecase.UserFind, loginUsecase *usecase.Login) *Auth {
+	return &Auth{userFindUsecase: userFindUsecase, loginUsecase: loginUsecase}
 }
 
 type checkAuthResponse struct {
-	Authorized bool `json:"authorized"`
+	User *entity.User `json:"user"`
 }
 
 func (h *Auth) CheckAuth(w http.ResponseWriter, r *http.Request) {
-	authorized := retrieveUserID(r) != nil
-	render.JSON(w, r, &checkAuthResponse{Authorized: authorized})
+	var user *entity.User
+	if userID := retrieveUserID(r); userID != nil {
+		u, err := h.userFindUsecase.Call(r.Context(), *userID)
+		if err != nil {
+			handleError(err, w)
+			return
+		}
+		user = &u
+	}
+	render.JSON(w, r, &checkAuthResponse{User: user})
 }
 
 type loginRequest struct {

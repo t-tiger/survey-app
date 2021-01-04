@@ -39,7 +39,7 @@ func (u *UserCreate) Call(ctx context.Context, name, email, password string) (us
 	if !emailRegex.MatchString(email) {
 		return user, cerrors.Errorf(cerrors.InvalidInput, "email format is invalid")
 	}
-	duplicated, err := u.repo.FindBy(ctx, email)
+	duplicated, err := u.repo.FindByEmail(ctx, email)
 	if err != nil {
 		return user, err
 	}

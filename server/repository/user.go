@@ -7,6 +7,7 @@ import (
 )
 
 type User interface {
-	FindBy(ctx context.Context, email string) (*entity.User, error)
+	FindBy(ctx context.Context, id string) (entity.User, error)
+	FindByEmail(ctx context.Context, email string) (*entity.User, error)
 	Create(ctx context.Context, name, email, password string) (entity.User, error)
 }

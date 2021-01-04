@@ -43,10 +43,11 @@ type surveyListResponse struct {
 }
 
 type surveyResponse struct {
-	ID        string             `json:"id"`
-	Title     string             `json:"title"`
-	Questions []questionResponse `json:"questions"`
-	CreatedAt time.Time          `json:"created_at"`
+	ID          string             `json:"id"`
+	PublisherID string             `json:"publisher_id"`
+	Title       string             `json:"title"`
+	Questions   []questionResponse `json:"questions"`
+	CreatedAt   time.Time          `json:"created_at"`
 }
 
 type questionResponse struct {
@@ -148,10 +149,11 @@ func newSurveyListResponse(totalCnt int, ss []entity.Survey) surveyListResponse 
 // newSurveyListResponse builds surveyResponse from entity.Survey
 func newSurveyResponse(s entity.Survey) surveyResponse {
 	res := surveyResponse{
-		ID:        s.ID,
-		Title:     s.Title,
-		Questions: make([]questionResponse, len(s.Questions)),
-		CreatedAt: s.CreatedAt,
+		ID:          s.ID,
+		PublisherID: s.PublisherID,
+		Title:       s.Title,
+		Questions:   make([]questionResponse, len(s.Questions)),
+		CreatedAt:   s.CreatedAt,
 	}
 	for j, q := range s.Questions {
 		question := questionResponse{
