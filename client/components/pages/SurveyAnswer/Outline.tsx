@@ -1,12 +1,6 @@
 import React, { useContext } from 'react'
 
-import {
-  Box,
-  DialogContent,
-  Paper,
-  TextField,
-  Typography,
-} from '@material-ui/core'
+import { Box, Paper, TextField, Typography } from '@material-ui/core'
 import SurveyAnswerContext from 'components/pages/SurveyAnswer/Context'
 
 const Outline: React.FC = () => {

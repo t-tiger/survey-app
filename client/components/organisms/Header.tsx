@@ -1,5 +1,6 @@
 import React, { ReactNode, useContext } from 'react'
 import styled from 'styled-components'
+import Router from "next/router";
 
 import { AppBar, Button, Toolbar, Typography } from '@material-ui/core'
 
@@ -25,6 +26,7 @@ const Header: React.FC<Props> = ({ title }) => {
       await logout()
       clearUserId()
       showMessage('success', 'Logged out successfully.')
+      Router.replace(`/`)
     } catch (e) {
       if (e.response?.data?.message) {
         showMessage('error', e.response.data.message)

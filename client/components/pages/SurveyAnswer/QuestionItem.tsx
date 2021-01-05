@@ -29,7 +29,7 @@ const QuestionItem: React.FC<Props> = ({ question }) => {
     <Paper>
       <Box padding={3}>
         <Typography variant="h5" style={{ lineHeight: 1.4 }}>
-          {question.title}
+          Q{question.sequence}. {question.title}
         </Typography>
         <Box mt={1.5}>
           <RadioGroup value={selected || ''} onChange={handleSelect}>

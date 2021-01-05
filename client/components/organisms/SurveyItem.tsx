@@ -20,9 +20,10 @@ import Link from 'components/atoms/Link'
 
 type Props = {
   survey: Survey
+  hideButton?: boolean
 }
 
-const SurveyItem: React.FC<Props> = ({ survey }) => {
+const SurveyItem: React.FC<Props> = ({ survey, hideButton = false }) => {
   const { userId } = useContext(AppContext)
   const theme = useTheme()
 
@@ -51,22 +52,36 @@ const SurveyItem: React.FC<Props> = ({ survey }) => {
           </Typography>
         </Box>
       </Box>
-      <Box mt={3} mb={2}>
-        {survey.publisher.id === userId && <EditButton survey={survey} />}
-        {survey.publisher.id === userId ? (
-          <ActionButton variant="contained" color="secondary" disableElevation>
-            Watch Results
-          </ActionButton>
-        ) : (
-          <Link href={`/surveys/${survey.id}/answer`} noDecoration>
-            <ActionButton variant="contained" color="primary" disableElevation>
-              Start Survey
-            </ActionButton>
-          </Link>
-        )}
+      {!hideButton && (
+        <Box mt={3}>
+          {survey.publisher.id === userId && <EditButton survey={survey} />}
+          {survey.publisher.id === userId ? (
+            <Link href={`/surveys/${survey.id}/result`} noDecoration>
+              <ActionButton
+                variant="contained"
+                color="secondary"
+                disableElevation
+              >
+                Check Results
+              </ActionButton>
+            </Link>
+          ) : (
+            <Link href={`/surveys/${survey.id}/answer`} noDecoration>
+              <ActionButton
+                variant="contained"
+                color="primary"
+                disableElevation
+              >
+                Start Survey
+              </ActionButton>
+            </Link>
+          )}
+        </Box>
+      )}
+      <Box marginY={2}>
+        <Divider />
       </Box>
-      <Divider />
-      <Box mt={2} display="flex" justifyContent="space-between" color="#888">
+      <Box display="flex" justifyContent="space-between" color="#888">
         <Typography variant="body2">
           {formatDate(new Date(survey.created_at))}
         </Typography>

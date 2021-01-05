@@ -49,11 +49,11 @@ const QuestionEdit: React.FC<Props> = ({ question, onChange, onRemove }) => {
   return (
     <Paper>
       <Box padding={3}>
-        <Typography variant="h5">Question {question.sequence}</Typography>
+        <Typography variant="h5">QuestionItem {question.sequence}</Typography>
         <TextField
           margin="normal"
           value={title}
-          label="Question title"
+          label="QuestionItem title"
           onChange={handleChangeQuestionTitle}
           InputLabelProps={{ shrink: true }}
           fullWidth

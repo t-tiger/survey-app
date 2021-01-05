@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import styled from 'styled-components'
+import Router from 'next/router'
 
 import { Box, Button } from '@material-ui/core'
 
@@ -46,6 +47,7 @@ const SubmitButton: React.FC = () => {
         optionIds: Object.values(answers),
       })
       showMessage('success', 'Submission has been received successfully.')
+      Router.replace(`/surveys/${survey.id}/result`)
     } catch (e) {
       if (e.response?.data?.message) {
         showMessage('error', e.response.data.message)
