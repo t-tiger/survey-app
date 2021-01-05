@@ -12,23 +12,26 @@ import (
 )
 
 type Survey struct {
-	createUsecase *usecase.SurveyCreate
-	deleteUsecase *usecase.SurveyDelete
-	fetchUsecase  *usecase.SurveyFetchList
-	updateUsecase *usecase.SurveyUpdate
+	createUsecase    *usecase.SurveyCreate
+	deleteUsecase    *usecase.SurveyDelete
+	fetchListUsecase *usecase.SurveyFetchList
+	findUsecase      *usecase.SurveyFind
+	updateUsecase    *usecase.SurveyUpdate
 }
 
 func NewSurvey(
 	createUsecase *usecase.SurveyCreate,
 	deleteUsecase *usecase.SurveyDelete,
-	fetchUsecase *usecase.SurveyFetchList,
+	fetchListUsecase *usecase.SurveyFetchList,
+	findUsecase *usecase.SurveyFind,
 	updateUsecase *usecase.SurveyUpdate,
 ) *Survey {
 	return &Survey{
-		createUsecase: createUsecase,
-		deleteUsecase: deleteUsecase,
-		fetchUsecase:  fetchUsecase,
-		updateUsecase: updateUsecase,
+		createUsecase:    createUsecase,
+		deleteUsecase:    deleteUsecase,
+		fetchListUsecase: fetchListUsecase,
+		findUsecase:      findUsecase,
+		updateUsecase:    updateUsecase,
 	}
 }
 
@@ -75,12 +78,23 @@ func (h *Survey) List(w http.ResponseWriter, r *http.Request) {
 		handleError(err, w)
 		return
 	}
-	total, ss, err := h.fetchUsecase.Call(r.Context(), req.Page, req.Count)
+	total, ss, err := h.fetchListUsecase.Call(r.Context(), req.Page, req.Count)
 	if err != nil {
 		handleError(err, w)
 		return
 	}
 	res := newSurveyListResponse(total, ss)
+	render.JSON(w, r, res)
+}
+
+func (h *Survey) Show(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	s, err := h.findUsecase.Call(r.Context(), id)
+	if err != nil {
+		handleError(err, w)
+		return
+	}
+	res := newSurveyResponse(s)
 	render.JSON(w, r, res)
 }
 
