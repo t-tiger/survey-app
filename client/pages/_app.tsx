@@ -6,7 +6,7 @@ import { CssBaseline, ThemeProvider } from '@material-ui/core'
 import { mainTheme } from 'const/theme'
 import { fetchAuthState } from 'modules/user/api'
 
-import { MessageCenterProvider } from 'utils/messageCenter'
+import { MessageCenterProvider, useMessageCenter } from 'utils/messageCenter'
 import { AppContextProvider } from 'components/pages/AppContext'
 
 const App: React.FC<AppProps> = ({ Component, pageProps }) => {
@@ -31,6 +31,7 @@ type RootProps = Pick<AppProps, 'Component' | 'pageProps'>
 const Root: React.FC<RootProps> = ({ Component, pageProps }) => {
   const [ready, setReady] = useState(false)
   const [userId, setUserId] = useState<string>()
+  const { showMessage } = useMessageCenter()
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -39,6 +40,10 @@ const Root: React.FC<RootProps> = ({ Component, pageProps }) => {
           data: { user },
         } = await fetchAuthState()
         setUserId(user?.id)
+      } catch (e) {
+        if (e.response?.data?.message) {
+          showMessage('error', e.response.data.message)
+        }
       } finally {
         setReady(true)
       }

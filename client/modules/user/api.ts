@@ -40,3 +40,6 @@ export const signIn = (
   params: SignInParams,
 ): Promise<AxiosResponse<SignInResponse>> =>
   axios.post(`${API_ENDPOINT}/login`, params)
+
+export const logout = (): Promise<AxiosResponse<''>> =>
+  axios.post(`${API_ENDPOINT}/logout`)

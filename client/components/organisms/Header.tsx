@@ -3,11 +3,12 @@ import styled from 'styled-components'
 
 import { AppBar, Button, Toolbar, Typography } from '@material-ui/core'
 
+import { logout } from "modules/user/api";
+import { useMessageCenter } from "utils/messageCenter";
 import { useToggleDialog } from 'utils/dialog'
 
 import AppContext from 'components/pages/AppContext'
 import AuthDialog from "components/organisms/AuthDialog/Index";
-import { useMessageCenter } from "utils/messageCenter";
 
 type Props = {
   title: ReactNode
@@ -22,9 +23,16 @@ const Header: React.FC<Props> = ({ title }) => {
     setOpenAuthDialog,
   ] = useToggleDialog()
 
-  const handleLogOutClick = () => {
-    clearUserId()
-    showMessage('success', 'Logged out successfully.')
+  const handleLogOutClick = async() => {
+    try {
+      await logout()
+      clearUserId()
+      showMessage('success', 'Logged out successfully.')
+    } catch (e) {
+      if (e.response?.data?.message) {
+        showMessage('error', e.response.data.message)
+      }
+    }
   }
   const handleSignUpClick = () => {
     setOpenAuthDialog(true)

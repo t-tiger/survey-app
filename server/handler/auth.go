@@ -74,6 +74,13 @@ func (h *Auth) Login(w http.ResponseWriter, r *http.Request) {
 	render.JSON(w, r, &loginResponse{User: user})
 }
 
+func (h *Auth) Logout(w http.ResponseWriter, _ *http.Request) {
+	// remove token cookie
+	c := &http.Cookie{Name: tokenCookieName, Value: "", Path: "/", Expires: time.Unix(0, 0), HttpOnly: true}
+	http.SetCookie(w, c)
+	w.WriteHeader(http.StatusNoContent)
+}
+
 // createToken generates json web token
 func createToken(userID string) (string, error) {
 	t := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{

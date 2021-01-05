@@ -53,6 +53,7 @@ func New(db *gorm.DB) http.Handler {
 	// authentication required group
 	r.Group(func(r chi.Router) {
 		r.Use(handler.AuthUser)
+		r.Post("/logout", authHandler.Logout)
 		r.Post("/surveys", surveyHandler.Create)
 		r.Put("/surveys/{id}", surveyHandler.Update)
 		r.Delete("/surveys/{id}", surveyHandler.Delete)
