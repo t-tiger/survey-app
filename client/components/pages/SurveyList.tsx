@@ -16,7 +16,7 @@ import SurveyItem from 'components/organisms/SurveyItem'
 import AuthDialog from 'components/organisms/AuthDialog/Index'
 
 const Index: React.FC = () => {
-  const [ready, setReady] = useState(true)
+  const [ready, setReady] = useState(false)
   const [surveys, setSurveys] = useState<Survey[]>([])
 
   const { userId } = useContext(AppContext)

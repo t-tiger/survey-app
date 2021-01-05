@@ -8,6 +8,7 @@ import { fetchAuthState } from 'modules/user/api'
 
 import { MessageCenterProvider, useMessageCenter } from 'utils/messageCenter'
 import { AppContextProvider } from 'components/pages/AppContext'
+import { useQuery } from "utils/query";
 
 const App: React.FC<AppProps> = ({ Component, pageProps }) => {
   useEffect(() => {
@@ -29,6 +30,8 @@ const App: React.FC<AppProps> = ({ Component, pageProps }) => {
 type RootProps = Pick<AppProps, 'Component' | 'pageProps'>
 
 const Root: React.FC<RootProps> = ({ Component, pageProps }) => {
+  const query = useQuery()
+
   const [ready, setReady] = useState(false)
   const [userId, setUserId] = useState<string>()
   const { showMessage } = useMessageCenter()
@@ -51,7 +54,8 @@ const Root: React.FC<RootProps> = ({ Component, pageProps }) => {
     checkAuth()
   }, [])
 
-  if (!ready) {
+  // query returns null at the first time on SSR, wait until query will be hydrated
+  if (!ready || !query) {
     return null
   }
   return (

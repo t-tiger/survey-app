@@ -5,17 +5,16 @@ import Head from 'next/head'
 import { Box } from '@material-ui/core'
 
 import Header from 'components/organisms/Header'
+import Link from 'components/atoms/Link'
 
 type Props = {
   children: ReactNode
   title: string
-  headerTitle?: ReactNode
 }
 
 const DefaultTemplate: React.FC<Props> = ({
   children,
   title,
-  headerTitle,
 }: Props): ReactElement => (
   <Root>
     <Head>
@@ -25,7 +24,13 @@ const DefaultTemplate: React.FC<Props> = ({
       </title>
     </Head>
     <Box>
-      <Header title={headerTitle || title} />
+      <Header
+        title={
+          <Link href="/" color="inherit" noDecoration>
+            Survey app
+          </Link>
+        }
+      />
       <Main component="main">{children}</Main>
     </Box>
   </Root>
