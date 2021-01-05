@@ -10,11 +10,11 @@ services:
       POSTGRES_DB: survey
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
-      ALLOWED_ORIGINS: http://localhost:3030
-    depends_on:
-      - db
+      ALLOWED_ORIGINS: http://localhost:3000
     tty: true
     stdin_open: true
+    ports:
+      - 8080:8080
   test:
     image: survey-server-base:latest
     environment:
@@ -24,7 +24,7 @@ services:
       POSTGRES_DB: survey
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
-      ALLOWED_ORIGINS: http://localhost:3030
+      ALLOWED_ORIGINS: http://localhost:3000
     volumes:
       - .:/go/src/github.com/t-tiger/survey/server
       - go_pkg:/go/pkg

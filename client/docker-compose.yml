@@ -1,0 +1,6 @@
+version: "3"
+services:
+  survey-client:
+    image: survey-client:latest
+    ports:
+      - 3000:3000
