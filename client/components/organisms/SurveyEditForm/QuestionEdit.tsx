@@ -1,34 +1,84 @@
-import React, { useState } from 'react'
+import React from 'react'
 
-import { Box, Button, Divider, Paper } from '@material-ui/core'
+import {
+  Box,
+  Button,
+  Divider,
+  Paper,
+  TextField,
+  Typography,
+} from '@material-ui/core'
 
 import { issueId } from 'utils/id'
-import { Question } from 'modules/survey/types'
+import { Option, Question } from 'modules/survey/types'
 
 type Props = {
-  question: {
-    title: Question['title']
-    options: Array<{ id: string; title: string }>
+  question: Pick<Question, 'id' | 'title' | 'sequence'> & {
+    options: Array<Pick<Option, 'id' | 'title'>>
   }
-  onClickRemove: () => void
+  onChange: (question: Props['question']) => void
+  onRemove: () => void
 }
 
-const QuestionEdit: React.FC<Props> = ({ question, onClickRemove }) => {
-  const [options, setOptions] = useState([...question.options])
+const QuestionEdit: React.FC<Props> = ({ question, onChange, onRemove }) => {
+  const { title, options } = question
 
-  const handleAddOption = () =>
-    setOptions([...options, { id: issueId(), title: '' }])
+  const handleChangeQuestionTitle = (
+    e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
+  ) => {
+    onChange({ ...question, title: e.target.value })
+  }
+  const handleChangeOptionTitle = (
+    i: number,
+    e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
+  ) => {
+    onChange({
+      ...question,
+      options: options.map((o, j) =>
+        i === j ? { ...o, title: e.target.value } : o,
+      ),
+    })
+  }
+  const handleAddOption = () => {
+    onChange({
+      ...question,
+      options: [...options, { id: issueId(), title: '' }],
+    })
+  }
 
   return (
     <Paper>
       <Box padding={3}>
-        {options.map((o) => (
-          <Box key={o.id} mb={2}>
-            {o.title}
-          </Box>
+        <Typography variant="h5">Question {question.sequence}</Typography>
+        <TextField
+          margin="normal"
+          value={title}
+          label="Question title"
+          onChange={handleChangeQuestionTitle}
+          InputLabelProps={{ shrink: true }}
+          fullWidth
+          required
+        />
+        <Box marginY={2}>
+          <Divider />
+        </Box>
+        <Typography variant="h6">Options</Typography>
+        {question.options.map((o, i) => (
+          <TextField
+            key={o.id}
+            margin="normal"
+            value={o.title}
+            label={`Title of option ${i + 1}`}
+            onChange={(e) => handleChangeOptionTitle(i, e)}
+            InputLabelProps={{ shrink: true }}
+            fullWidth
+            required
+          />
         ))}
-        <Divider />
-        <Box mt={2} display="flex" justifyContent="space-between">
+        <Box marginY={2}>
+          <Divider />
+        </Box>
+        <Box display="flex" justifyContent="space-between">
           <Button
             color="secondary"
             variant="contained"
@@ -36,7 +86,7 @@ const QuestionEdit: React.FC<Props> = ({ question, onClickRemove }) => {
           >
             Add option
           </Button>
-          <Button variant="text" onClick={onClickRemove}>
+          <Button variant="text" onClick={onRemove}>
             Remove
           </Button>
         </Box>

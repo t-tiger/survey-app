@@ -21,6 +21,17 @@ export const fetchSurvey = (
 ): Promise<AxiosResponse<SurveyResponse>> =>
   axios.get(`${API_ENDPOINT}/surveys/${id}`)
 
+type PostSurveyParams = {
+  title: string
+  questions: Array<{
+    title: string
+    options: Array<{ title: string }>
+  }>
+}
+
+export const postSurvey = (params: PostSurveyParams) =>
+  axios.post(`${API_ENDPOINT}/surveys`, params)
+
 type PostRespondentParams = {
   surveyId: string
   email: string

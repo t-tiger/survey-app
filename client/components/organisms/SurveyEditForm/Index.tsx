@@ -1,29 +1,65 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { Box, Button } from '@material-ui/core'
 
-import { Question, Survey } from 'modules/survey/types'
+import {
+  Option,
+  Question,
+  Survey,
+} from 'modules/survey/types'
 import { issueId } from 'utils/id'
 
-import SurveyEdit from 'components/organisms/SurveyEditForm/SurveyEdit'
 import QuestionEdit from 'components/organisms/SurveyEditForm/QuestionEdit'
+import MultiLineToolTip from 'components/atoms/MultiLineTooltip'
+import SurveyEdit from "components/organisms/SurveyEditForm/SurveyEdit";
 
-type Props = {
-  survey: {
-    title: Survey['title']
-    questions: Array<{
-      id: string
-      title: Question['title']
-      options: Array<{ id: string; title: string }>
-    }>
-  }
+export type SurveyForEdit = {
+  title: Survey['title']
+  questions: Array<
+    Pick<Question, 'id' | 'title'> & {
+      options: Array<Pick<Option, 'id' | 'title'>>
+    }
+  >
 }
 
-const SurveyEditForm: React.FC<Props> = ({ survey }) => {
+type Props = {
+  survey: SurveyForEdit
+  submitTitle: string
+  onSubmit: (survey: SurveyForEdit) => Promise<void>
+}
+
+const SurveyEditForm: React.FC<Props> = ({ survey, submitTitle, onSubmit }) => {
+  const [sending, setSending] = useState(false)
   const [title, setTitle] = useState(survey.title || '')
-  const [questions, setQuestions] = useState<Props['survey']['questions']>([
+  const [questions, setQuestions] = useState<SurveyForEdit['questions']>([
     ...survey.questions,
   ])
+  const [validationErrs, setValidationErrs] = useState<string[]>([])
+
+  const validate = () => {
+    const errs = []
+    if (title.trim().length === 0) {
+      errs.push('Please input survey title.')
+    }
+    if (questions.length === 0) {
+      errs.push('At least one question is required.')
+    }
+    if (questions.some((q) => q.title.trim().length === 0)) {
+      errs.push('Please input question title.')
+    }
+    if (
+      questions.some(
+        (q) => q.options.filter((o) => o.title.trim().length > 0).length === 0,
+      )
+    ) {
+      errs.push('At least one option is required for every question.')
+    }
+    return errs
+  }
+
+  useEffect(() => {
+    setValidationErrs(validate())
+  }, [title, questions])
 
   const handleAddQuestion = () => {
     setQuestions([
@@ -35,8 +71,19 @@ const SurveyEditForm: React.FC<Props> = ({ survey }) => {
       },
     ])
   }
-  const handleClickRemove = (i: number) => {
-    setQuestions(questions.filter((_, j) => i !== j))
+  const handleChangeQuestion = (
+    idx: number,
+    question: typeof questions[number],
+  ) => {
+    setQuestions(questions.map((q, i) => (idx === i ? question : q)))
+  }
+  const handleRemoveQuestion = (idx: number) => {
+    setQuestions(questions.filter((_, i) => idx !== i))
+  }
+  const handleSubmit = async () => {
+    setSending(true)
+    await onSubmit({ title, questions })
+    setSending(false)
   }
 
   return (
@@ -45,8 +92,9 @@ const SurveyEditForm: React.FC<Props> = ({ survey }) => {
       {questions.map((q, i) => (
         <Box mt={3} key={q.id}>
           <QuestionEdit
-            question={q}
-            onClickRemove={() => handleClickRemove(i)}
+            question={{ ...q, sequence: i + 1 }}
+            onChange={(q) => handleChangeQuestion(i, q)}
+            onRemove={() => handleRemoveQuestion(i)}
           />
         </Box>
       ))}
@@ -59,9 +107,17 @@ const SurveyEditForm: React.FC<Props> = ({ survey }) => {
         >
           Add question
         </Button>
-        <Button color="primary" size="large" variant="contained">
-          Create new
-        </Button>
+        <MultiLineToolTip titles={validationErrs}>
+          <Button
+            color="primary"
+            size="large"
+            variant="contained"
+            disabled={sending || validationErrs.length > 0}
+            onClick={handleSubmit}
+          >
+            {submitTitle}
+          </Button>
+        </MultiLineToolTip>
       </Box>
     </>
   )

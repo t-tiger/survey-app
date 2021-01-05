@@ -2,15 +2,15 @@ import React, { ReactNode, useState } from 'react'
 
 import { Option, Survey } from 'modules/survey/types'
 
-type State = {
+export type SurveyAnswerState = {
   survey: Survey
   answers: { [questionId: string]: Option['id'] }
-  setAnswers: (val: State['answers']) => void
+  setAnswers: (val: SurveyAnswerState['answers']) => void
   respondent: { name: string; email: string }
-  setRespondent: (val: State['respondent']) => void
+  setRespondent: (val: SurveyAnswerState['respondent']) => void
 }
 
-const SurveyAnswerContext = React.createContext<State>(null!)
+const SurveyAnswerContext = React.createContext<SurveyAnswerState>(null!)
 
 type Props = {
   survey: Survey
@@ -21,7 +21,7 @@ export const SurveyAnswerContextProvider: React.FC<Props> = ({
   survey,
   children,
 }) => {
-  const [answers, setAnswers] = useState<State['answers']>({})
+  const [answers, setAnswers] = useState<SurveyAnswerState['answers']>({})
   const [respondent, setRespondent] = useState({ name: '', email: '' })
 
   return (

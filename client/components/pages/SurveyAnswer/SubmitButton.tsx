@@ -1,12 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react'
 import styled from 'styled-components'
 
-import { Box, Button, Tooltip } from '@material-ui/core'
+import { Box, Button } from '@material-ui/core'
 
 import { postRespondent } from 'modules/survey/api'
 import { useMessageCenter } from 'utils/messageCenter'
 
 import SurveyAnswerContext from 'components/pages/SurveyAnswer/Context'
+import MultiLineToolTip from 'components/atoms/MultiLineTooltip'
 
 const SubmitButton: React.FC = () => {
   const [sending, setSending] = useState(false)
@@ -15,7 +16,7 @@ const SubmitButton: React.FC = () => {
   const { survey, respondent, answers } = useContext(SurveyAnswerContext)
   const { showMessage } = useMessageCenter()
 
-  useEffect(() => {
+  const validate = () => {
     const errs = []
     if (respondent.name.trim().length === 0) {
       errs.push('Please input your name.')
@@ -26,8 +27,11 @@ const SubmitButton: React.FC = () => {
     if (Object.keys(answers).length < survey.questions.length) {
       errs.push('Please answer all questions.')
     }
+    return errs
+  }
 
-    setValidationErrs(errs)
+  useEffect(() => {
+    setValidationErrs(validate())
   }, [survey, respondent, answers])
 
   const handleSubmit = async () => {
@@ -41,7 +45,7 @@ const SubmitButton: React.FC = () => {
         surveyId: survey.id,
         optionIds: Object.values(answers),
       })
-      showMessage('success', 'Submission has been received successfully')
+      showMessage('success', 'Submission has been received successfully.')
     } catch (e) {
       if (e.response?.data?.message) {
         showMessage('error', e.response.data.message)
@@ -53,29 +57,16 @@ const SubmitButton: React.FC = () => {
 
   return (
     <Box mt={3.5} textAlign="center">
-      <Tooltip
-        title={
-          validationErrs.length > 0 ? (
-            <span style={{ whiteSpace: 'pre-line' }}>
-              {validationErrs.join('\n')}
-            </span>
-          ) : (
-            ''
-          )
-        }
-      >
-        {/* insert div element because disabled button also makes tooltip disabled */}
-        <div>
-          <StyledButton
-            color="primary"
-            variant="contained"
-            disabled={sending || validationErrs.length > 0}
-            onClick={handleSubmit}
-          >
-            Complete survey
-          </StyledButton>
-        </div>
-      </Tooltip>
+      <MultiLineToolTip titles={validationErrs}>
+        <StyledButton
+          color="primary"
+          variant="contained"
+          disabled={sending || validationErrs.length > 0}
+          onClick={handleSubmit}
+        >
+          Complete survey
+        </StyledButton>
+      </MultiLineToolTip>
     </Box>
   )
 }
