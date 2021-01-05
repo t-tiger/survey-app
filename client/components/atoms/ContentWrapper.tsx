@@ -14,7 +14,7 @@ const ContentWrapper: React.FC<Props> = ({ children }) => (
 const Container = styled.div`
   max-width: ${CONTENT_MAX_WIDTH + (12 * 2)}px;
   margin: auto;
-  padding: 25px 12px 0;
+  padding: 25px 12px;
 `
 
 export default ContentWrapper
