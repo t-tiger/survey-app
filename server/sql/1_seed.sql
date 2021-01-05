@@ -8,8 +8,8 @@ e47e85a1-c9e9-470a-875f-7f31b559db6b	user3	user3@dummy.com	$2a$10$xYV.h2hRTZ5FwE
 
 COPY surveys (id, publisher_id, title, created_at, updated_at) FROM stdin;
 057069c8-5af8-4b18-8021-234cf77d07ed	83a5a92a-ef29-4620-9b4e-5b268444bff8	Educational background survey	2021-01-04 22:58:13.625445	2021-01-04 22:58:13.625445
-8cd2217d-a95a-4af4-9a87-b6dd407ac67e	83a5a92a-ef29-4620-9b4e-5b268444bff8	Music listening habits survey	2021-01-04 22:58:13.639937	2021-01-04 22:58:13.639937
-1388d9dc-005c-4b0d-a62d-d15d64c8ca07	83a5a92a-ef29-4620-9b4e-5b268444bff8	Sports watching habits survey	2021-01-04 22:58:13.648237	2021-01-04 22:58:13.648237
+8cd2217d-a95a-4af4-9a87-b6dd407ac67e	80189713-b7b1-42d0-a5e1-8fab996c5b5a	Music listening habits survey	2021-01-04 22:58:13.639937	2021-01-04 22:58:13.639937
+1388d9dc-005c-4b0d-a62d-d15d64c8ca07	e47e85a1-c9e9-470a-875f-7f31b559db6b	Sports watching habits survey	2021-01-04 22:58:13.648237	2021-01-04 22:58:13.648237
 b318f189-f3cf-4991-85bb-10da66697998	83a5a92a-ef29-4620-9b4e-5b268444bff8	Software engineer comprehensive survey	2021-01-04 22:58:13.65283	2021-01-04 22:58:13.65283
 \.
 

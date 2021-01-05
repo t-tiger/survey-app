@@ -42,16 +42,21 @@ const Index: React.FC = () => {
 
   return (
     <DefaultTemplate title="Surveys">
-      {!ready ? <InitialLoading /> : <Content surveys={surveys} />}
+      {!ready ? (
+        <InitialLoading />
+      ) : (
+        <Content surveys={surveys} refresh={fetch} />
+      )}
     </DefaultTemplate>
   )
 }
 
 type ContentProps = {
   surveys: Survey[]
+  refresh: () => void
 }
 
-const Content: React.FC<ContentProps> = ({ surveys }) => {
+const Content: React.FC<ContentProps> = ({ surveys, refresh }) => {
   const theme = useTheme()
 
   const { userId } = useContext(AppContext)
@@ -90,7 +95,7 @@ const Content: React.FC<ContentProps> = ({ surveys }) => {
       <Grid container spacing={3}>
         {surveys.map((s) => (
           <Grid key={s.id} item xs={12} sm={6} md={4}>
-            <SurveyItem survey={s} />
+            <SurveyItem survey={s} onDelete={refresh} />
           </Grid>
         ))}
       </Grid>

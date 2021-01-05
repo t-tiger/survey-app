@@ -35,6 +35,9 @@ export const postSurvey = (params: SaveSurveyParams) =>
 export const updateSurvey = (id: string, params: SaveSurveyParams) =>
   axios.put(`${API_ENDPOINT}/surveys/${id}`, params)
 
+export const deleteSurvey = (id: string) =>
+  axios.delete(`${API_ENDPOINT}/surveys/${id}`)
+
 type PostRespondentParams = {
   surveyId: string
   email: string

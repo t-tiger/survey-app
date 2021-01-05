@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import NextError from 'next/error'
+import Router, { useRouter } from 'next/router'
 
-import { useRouter } from 'next/router'
+import { Box } from '@material-ui/core'
+
 import { fetchSurvey } from 'modules/survey/api'
 import { Survey } from 'modules/survey/types'
 
@@ -10,7 +12,6 @@ import ContentWrapper from 'components/atoms/ContentWrapper'
 import InitialLoading from 'components/atoms/InitialLoading'
 import SurveyItem from 'components/organisms/SurveyItem'
 import QuestionItem from 'components/pages/SurveyResult/QuestionItem'
-import { Box } from '@material-ui/core'
 
 const SurveyResult: React.FC = () => {
   const id = useRouter().query.id as string
@@ -49,9 +50,12 @@ type ContentProps = {
 }
 
 const Content: React.FC<ContentProps> = ({ survey }) => {
+  const handleDelete = () => {
+    Router.replace(`/`)
+  }
   return (
     <>
-      <SurveyItem survey={survey} hideButton />
+      <SurveyItem survey={survey} onDelete={handleDelete} hideButton />
       {survey.questions.map((q) => (
         <Box mt={3} key={q.id}>
           <QuestionItem question={q} />

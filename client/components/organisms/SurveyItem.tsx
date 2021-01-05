@@ -1,37 +1,97 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import styled from 'styled-components'
 
 import {
   Box,
   Button,
+  ClickAwayListener,
   Divider,
-  Tooltip,
+  Grow,
+  IconButton,
+  MenuItem,
+  MenuList,
+  Paper,
+  Popper,
+  PopperPlacementType,
   Typography,
   useTheme,
 } from '@material-ui/core'
-import { ContactSupport, Person } from '@material-ui/icons'
+import { ContactSupport, MoreVert, Person } from '@material-ui/icons'
 
 import { Survey } from 'modules/survey/types'
 import { formatDate } from 'utils/date'
 import { totalVoteCount } from 'modules/survey/helpers'
+import { useMessageCenter } from 'utils/messageCenter'
+import { deleteSurvey } from 'modules/survey/api'
 
 import AppContext from 'components/pages/AppContext'
 import Link from 'components/atoms/Link'
+import Router from 'next/router'
+import ConfirmDialog from 'components/organisms/ConfirmDialog'
+
+/** Material-UI's Popper child elements */
+type PopperProps = {
+  TransitionProps: {
+    in: boolean
+    onEnter: () => void
+    onExited: () => void
+  }
+  placement: PopperPlacementType
+}
 
 type Props = {
   survey: Survey
   hideButton?: boolean
+  onDelete: () => void
 }
 
-const SurveyItem: React.FC<Props> = ({ survey, hideButton = false }) => {
+const SurveyItem: React.FC<Props> = ({
+  survey,
+  hideButton = false,
+  onDelete,
+}) => {
+  const anchorRef = React.useRef<HTMLDivElement>(null)
+  const [isOpenMenu, setOpenMenu] = useState(false)
+  const [isOpenDeleteDialog, setOpenDeleteDialog] = useState(false)
+
   const { userId } = useContext(AppContext)
+  const { showMessage } = useMessageCenter()
   const theme = useTheme()
+  const editable = totalVoteCount(survey) === 0
+
+  const handleClickEdit = () => {
+    Router.push(`/surveys/${survey.id}/edit`)
+  }
+  const handleDelete = async () => {
+    try {
+      await deleteSurvey(survey.id)
+      showMessage('success', 'Survey has been deleted successfully.')
+      setOpenDeleteDialog(false)
+      onDelete()
+    } catch (e) {
+      if (e.response?.data?.message) {
+        showMessage('error', e.response.data.message)
+      }
+    }
+  }
 
   return (
     <Container padding={2.5} boxShadow={2}>
-      <Typography variant="h6" style={{ lineHeight: 1.4 }}>
-        {survey.title}
-      </Typography>
+      <Box display="flex" alignItems="start">
+        <Typography variant="h6" style={{ lineHeight: 1.4, flex: 1 }}>
+          {survey.title}
+        </Typography>
+        {survey.publisher.id === userId && (
+          <div ref={anchorRef}>
+            <IconButton
+              style={{ margin: theme.spacing(-1.5) }}
+              onClick={() => setOpenMenu(true)}
+            >
+              <MoreVert />
+            </IconButton>
+          </div>
+        )}
+      </Box>
       <Box mt={1} display="flex" color="#888">
         <Box display="flex">
           <Person fontSize="small" />
@@ -54,7 +114,6 @@ const SurveyItem: React.FC<Props> = ({ survey, hideButton = false }) => {
       </Box>
       {!hideButton && (
         <Box mt={3}>
-          {survey.publisher.id === userId && <EditButton survey={survey} />}
           {survey.publisher.id === userId ? (
             <Link href={`/surveys/${survey.id}/result`} noDecoration>
               <ActionButton
@@ -87,31 +146,45 @@ const SurveyItem: React.FC<Props> = ({ survey, hideButton = false }) => {
         </Typography>
         <Typography variant="body2">{totalVoteCount(survey)} Voted</Typography>
       </Box>
+      <Popper open={isOpenMenu} anchorEl={anchorRef.current} transition>
+        {({
+          TransitionProps: { in: transIn, onEnter, onExited },
+          placement,
+        }: PopperProps) => (
+          <Grow
+            in={transIn}
+            onEnter={onEnter}
+            onExited={onExited}
+            style={{
+              transformOrigin:
+                placement === 'bottom' ? 'center top' : 'center bottom',
+            }}
+          >
+            <Paper>
+              <ClickAwayListener onClickAway={() => setOpenMenu(false)}>
+                <MenuList>
+                  <MenuItem disabled={!editable} onClick={handleClickEdit}>
+                    Edit Survey
+                  </MenuItem>
+                  <MenuItem onClick={() => setOpenDeleteDialog(true)}>
+                    Delete Survey
+                  </MenuItem>
+                </MenuList>
+              </ClickAwayListener>
+            </Paper>
+          </Grow>
+        )}
+      </Popper>
+      <ConfirmDialog
+        open={isOpenDeleteDialog}
+        color="secondary"
+        title="Delete survey"
+        description="Are you sure to delete survey?"
+        submitText="Delete"
+        onClose={() => setOpenDeleteDialog(false)}
+        onSubmit={handleDelete}
+      />
     </Container>
-  )
-}
-
-const EditButton: React.FC<EditProps> = ({ survey }) => {
-  const alreadyVoted = totalVoteCount(survey) > 0
-
-  const renderButton = () => (
-    <ActionButton variant="contained" disabled={alreadyVoted} disableElevation>
-      Edit Survey
-    </ActionButton>
-  )
-
-  return (
-    <Box mb={2}>
-      {alreadyVoted ? (
-        <Tooltip title={'You cannot edit the survey with votes.'}>
-          <div>{renderButton()}</div>
-        </Tooltip>
-      ) : (
-        <Link href={`/surveys/${survey.id}/edit`} noDecoration>
-          {renderButton()}
-        </Link>
-      )}
-    </Box>
   )
 }
 
@@ -123,8 +196,5 @@ const ActionButton = styled(Button)`
   width: 100%;
   border-radius: 20px;
 `
-type EditProps = {
-  survey: Survey
-}
 
 export default SurveyItem
