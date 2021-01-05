@@ -72,8 +72,8 @@ const SubmitButton: React.FC = () => {
 }
 
 const StyledButton = styled(Button)`
-  font-size: 20px;
-  padding: 10px 30px;
+  font-size: 18px;
+  padding: 8px 20px;
 `
 
 export default SubmitButton

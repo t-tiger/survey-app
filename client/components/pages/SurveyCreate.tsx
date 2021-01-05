@@ -13,13 +13,19 @@ import SurveyEditForm, {
   SurveyForEdit,
 } from 'components/organisms/SurveyEditForm/Index'
 
-const SurveyPost: React.FC = () => {
+const SurveyCreate: React.FC = () => {
   const { userId } = useContext(AppContext)
 
   if (!userId) {
     return <NextError statusCode={404} />
   }
-  return <Content />
+  return (
+    <DefaultTemplate title="Post survey">
+      <ContentWrapper>
+        <Content />
+      </ContentWrapper>
+    </DefaultTemplate>
+  )
 }
 
 const Content: React.FC = () => {
@@ -52,16 +58,13 @@ const Content: React.FC = () => {
   }
 
   return (
-    <DefaultTemplate title="Post survey">
-      <ContentWrapper>
-        <SurveyEditForm
-          survey={initialSurvey}
-          submitTitle="Create new"
-          onSubmit={handleSubmit}
-        />
-      </ContentWrapper>
-    </DefaultTemplate>
+    <SurveyEditForm
+      survey={initialSurvey}
+      pageTitle="Post new survey"
+      submitTitle="Create new"
+      onSubmit={handleSubmit}
+    />
   )
 }
 
-export default SurveyPost
+export default SurveyCreate

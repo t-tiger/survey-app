@@ -17,6 +17,7 @@ func New(db *gorm.DB) http.Handler {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 	r.Use(cors.Handler(cors.Options{
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE"},
 		AllowedOrigins:   config.Config.AllowedOrigins,
 		AllowCredentials: true,
 	}))

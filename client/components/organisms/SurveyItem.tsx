@@ -5,6 +5,7 @@ import {
   Box,
   Button,
   Divider,
+  Tooltip,
   Typography,
   useTheme,
 } from '@material-ui/core'
@@ -15,7 +16,7 @@ import { formatDate } from 'utils/date'
 import { totalVoteCount } from 'modules/survey/helpers'
 
 import AppContext from 'components/pages/AppContext'
-import Link from "components/atoms/Link";
+import Link from 'components/atoms/Link'
 
 type Props = {
   survey: Survey
@@ -51,15 +52,16 @@ const SurveyItem: React.FC<Props> = ({ survey }) => {
         </Box>
       </Box>
       <Box mt={3} mb={2}>
+        {survey.publisher.id === userId && <EditButton survey={survey} />}
         {survey.publisher.id === userId ? (
-          <StartButton variant="contained" color="secondary" disableElevation>
+          <ActionButton variant="contained" color="secondary" disableElevation>
             Watch Results
-          </StartButton>
+          </ActionButton>
         ) : (
           <Link href={`/surveys/${survey.id}/answer`} noDecoration>
-            <StartButton variant="contained" color="primary" disableElevation>
+            <ActionButton variant="contained" color="primary" disableElevation>
               Start Survey
-            </StartButton>
+            </ActionButton>
           </Link>
         )}
       </Box>
@@ -74,13 +76,40 @@ const SurveyItem: React.FC<Props> = ({ survey }) => {
   )
 }
 
+const EditButton: React.FC<EditProps> = ({ survey }) => {
+  const alreadyVoted = totalVoteCount(survey) > 0
+
+  const renderButton = () => (
+    <ActionButton variant="contained" disabled={alreadyVoted} disableElevation>
+      Edit Survey
+    </ActionButton>
+  )
+
+  return (
+    <Box mb={2}>
+      {alreadyVoted ? (
+        <Tooltip title={'You cannot edit the survey with votes.'}>
+          <div>{renderButton()}</div>
+        </Tooltip>
+      ) : (
+        <Link href={`/surveys/${survey.id}/edit`} noDecoration>
+          {renderButton()}
+        </Link>
+      )}
+    </Box>
+  )
+}
+
 const Container = styled(Box)`
   border-radius: 8px;
   background: white;
 `
-const StartButton = styled(Button)`
+const ActionButton = styled(Button)`
   width: 100%;
   border-radius: 20px;
 `
+type EditProps = {
+  survey: Survey
+}
 
 export default SurveyItem

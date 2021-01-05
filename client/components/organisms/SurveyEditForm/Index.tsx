@@ -24,11 +24,12 @@ export type SurveyForEdit = {
 
 type Props = {
   survey: SurveyForEdit
+  pageTitle: string
   submitTitle: string
   onSubmit: (survey: SurveyForEdit) => Promise<void>
 }
 
-const SurveyEditForm: React.FC<Props> = ({ survey, submitTitle, onSubmit }) => {
+const SurveyEditForm: React.FC<Props> = ({ survey, pageTitle, submitTitle, onSubmit }) => {
   const [sending, setSending] = useState(false)
   const [title, setTitle] = useState(survey.title || '')
   const [questions, setQuestions] = useState<SurveyForEdit['questions']>([
@@ -88,7 +89,7 @@ const SurveyEditForm: React.FC<Props> = ({ survey, submitTitle, onSubmit }) => {
 
   return (
     <>
-      <SurveyEdit title={title} onChange={setTitle} />
+      <SurveyEdit pageTitle={pageTitle}  surveyTitle={title} onChange={setTitle} />
       {questions.map((q, i) => (
         <Box mt={3} key={q.id}>
           <QuestionEdit

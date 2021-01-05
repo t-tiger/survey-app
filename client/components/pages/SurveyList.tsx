@@ -61,7 +61,7 @@ const Content: React.FC<ContentProps> = ({ surveys }) => {
     <ContentWrapper>
       <Box mb={3} textAlign="center">
         {userId ? (
-          <Link href="/surveys/post" noDecoration>
+          <Link href="/surveys/new" noDecoration>
             <Fab
               variant="extended"
               color="secondary"
