@@ -16,6 +16,16 @@ $ make build-and-start
 
 Then open `http://localhost:3000`.
 
+### Test users
+
+When applications are started by above command, test users will be created automatically. These are the login information of test users.
+
+|  Email  |  Password  |
+| ---- | ---- |
+|  user1@dummy.com  |  password  |
+|  user2@dummy.com  |  password  |
+|  user3@dummy.com  |  password  |
+
 ## Remove docker containers
 
 Since above command starts several docker containers, please run following command to remove containers after using applications.
