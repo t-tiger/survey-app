@@ -102,5 +102,5 @@ func (p *Survey) Delete(ctx context.Context, s entity.Survey) error {
 }
 
 func (p *Survey) preloadedDB() *gorm.DB {
-	return p.db.Preload("Questions").Preload("Questions.Options").Preload("Questions.Options.Answers")
+	return p.db.Preload("Publisher").Preload("Questions").Preload("Questions.Options").Preload("Questions.Options.Answers")
 }

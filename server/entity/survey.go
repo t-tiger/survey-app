@@ -5,6 +5,7 @@ import "time"
 type Survey struct {
 	ID          string `json:"id" gorm:"type:uuid;default:uuid_generate_v4()"`
 	PublisherID string
+	Publisher   User `gorm:"foreignKey:PublisherID"`
 	Title       string
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
