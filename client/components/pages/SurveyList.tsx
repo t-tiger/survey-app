@@ -8,6 +8,7 @@ import { useMessageCenter } from 'utils/messageCenter'
 import { useToggleDialog } from 'utils/dialog'
 import { Survey } from 'modules/survey/types'
 
+import Link from 'components/atoms/Link'
 import DefaultTemplate from 'components/templates/DefaultTemplate'
 import InitialLoading from 'components/atoms/InitialLoading'
 import AppContext from 'components/pages/AppContext'
@@ -60,16 +61,17 @@ const Content: React.FC<ContentProps> = ({ surveys }) => {
     <ContentWrapper>
       <Box mb={3} textAlign="center">
         {userId ? (
-          <Fab
-            variant="extended"
-            color="secondary"
-            size="large"
-            style={{ flexShrink: 0 }}
-            onClick={() => alert('click')}
-          >
-            <Add />
-            <span style={{ marginLeft: theme.spacing(1) }}>Post survey</span>
-          </Fab>
+          <Link href="/surveys/post" noDecoration>
+            <Fab
+              variant="extended"
+              color="secondary"
+              size="large"
+              style={{ flexShrink: 0 }}
+            >
+              <Add />
+              <span style={{ marginLeft: theme.spacing(1) }}>Post survey</span>
+            </Fab>
+          </Link>
         ) : (
           <Fab
             variant="extended"
