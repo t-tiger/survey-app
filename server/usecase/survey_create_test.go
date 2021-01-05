@@ -11,12 +11,6 @@ import (
 )
 
 func TestSurveyCreate_Call(t *testing.T) {
-	repo := &surveyRepoMock{
-		CreateMock: func(_ context.Context, s entity.Survey) (entity.Survey, error) {
-			return s, nil
-		},
-	}
-
 	tests := []struct {
 		name    string
 		s       entity.Survey
@@ -101,6 +95,15 @@ func TestSurveyCreate_Call(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			repo := &surveyRepoMock{
+				FindByMock: func(_ context.Context, id string) (entity.Survey, error) {
+					return tt.s, nil
+				},
+				CreateMock: func(_ context.Context, s entity.Survey) (entity.Survey, error) {
+					return s, nil
+				},
+			}
+
 			u := NewSurveyCreate(repo)
 			s, err := u.Call(context.Background(), tt.s)
 			if err != nil {

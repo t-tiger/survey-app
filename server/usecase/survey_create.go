@@ -21,5 +21,9 @@ func (u *SurveyCreate) Call(ctx context.Context, s entity.Survey) (entity.Survey
 	if err := service.ValidateSurvey(s); err != nil {
 		return entity.Survey{}, err
 	}
-	return u.repo.Create(ctx, s)
+	s, err := u.repo.Create(ctx, s)
+	if err != nil {
+		return entity.Survey{}, err
+	}
+	return u.repo.FindBy(ctx, s.ID)
 }

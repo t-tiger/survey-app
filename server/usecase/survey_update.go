@@ -40,5 +40,8 @@ func (u *SurveyUpdate) Call(ctx context.Context, s entity.Survey, userID string)
 		updated, err = repo.Create(ctx, s)
 		return err
 	})
-	return updated, err
+	if err != nil {
+		return updated, nil
+	}
+	return u.repo.FindBy(ctx, updated.ID)
 }
