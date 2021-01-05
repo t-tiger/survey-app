@@ -1,14 +1,21 @@
 import React, { useContext } from 'react'
 import styled from 'styled-components'
 
-import { Box, Button, Divider, Typography, useTheme } from '@material-ui/core'
+import {
+  Box,
+  Button,
+  Divider,
+  Typography,
+  useTheme,
+} from '@material-ui/core'
 import { ContactSupport, Person } from '@material-ui/icons'
 
 import { Survey } from 'modules/survey/types'
-import { formatDate } from "utils/date";
+import { formatDate } from 'utils/date'
 import { totalVoteCount } from 'modules/survey/helpers'
 
 import AppContext from 'components/pages/AppContext'
+import Link from "components/atoms/Link";
 
 type Props = {
   survey: Survey
@@ -49,14 +56,18 @@ const SurveyItem: React.FC<Props> = ({ survey }) => {
             Watch Results
           </StartButton>
         ) : (
-          <StartButton variant="contained" color="primary" disableElevation>
-            Start Survey
-          </StartButton>
+          <Link href={`/surveys/${survey.id}/answer`} noDecoration>
+            <StartButton variant="contained" color="primary" disableElevation>
+              Start Survey
+            </StartButton>
+          </Link>
         )}
       </Box>
       <Divider />
       <Box mt={2} display="flex" justifyContent="space-between" color="#888">
-        <Typography variant="body2">{formatDate(new Date(survey.created_at))}</Typography>
+        <Typography variant="body2">
+          {formatDate(new Date(survey.created_at))}
+        </Typography>
         <Typography variant="body2">{totalVoteCount(survey)} Voted</Typography>
       </Box>
     </Container>
