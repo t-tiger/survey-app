@@ -1,5 +1,9 @@
 export type Survey = {
   id: string
+  publisher: {
+    id: string
+    name: string
+  }
   title: string
   questions: Question[]
   created_at: '2021-01-03T02:32:33.049872Z'

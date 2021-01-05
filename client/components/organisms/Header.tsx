@@ -3,12 +3,13 @@ import styled from 'styled-components'
 
 import { AppBar, Button, Toolbar, Typography } from '@material-ui/core'
 
-import { logout } from "modules/user/api";
-import { useMessageCenter } from "utils/messageCenter";
+import { CONTENT_MAX_WIDTH } from 'const/size'
+import { logout } from 'modules/user/api'
+import { useMessageCenter } from 'utils/messageCenter'
 import { useToggleDialog } from 'utils/dialog'
 
 import AppContext from 'components/pages/AppContext'
-import AuthDialog from "components/organisms/AuthDialog/Index";
+import AuthDialog from 'components/organisms/AuthDialog/Index'
 
 type Props = {
   title: ReactNode
@@ -16,14 +17,10 @@ type Props = {
 
 const Header: React.FC<Props> = ({ title }) => {
   const { userId, clearUserId } = useContext(AppContext)
-  const {showMessage} = useMessageCenter()
-  const [
-    authDialogKey,
-    isOpenAuthDialog,
-    setOpenAuthDialog,
-  ] = useToggleDialog()
+  const { showMessage } = useMessageCenter()
+  const [authDialogKey, isOpenAuthDialog, setOpenAuthDialog] = useToggleDialog()
 
-  const handleLogOutClick = async() => {
+  const handleLogOutClick = async () => {
     try {
       await logout()
       clearUserId()
@@ -43,7 +40,7 @@ const Header: React.FC<Props> = ({ title }) => {
       <AppBar position="sticky" color="primary">
         <Toolbar>
           <ToolbarInner>
-            <Typography variant="h6" noWrap>
+            <Typography variant="h5" style={{ fontWeight: 'bold' }} noWrap>
               {title}
             </Typography>
             <MenuContainer>
@@ -80,7 +77,7 @@ const Header: React.FC<Props> = ({ title }) => {
 const ToolbarInner = styled.div`
   display: flex;
   flex-grow: 1;
-  max-width: 1000px;
+  max-width: ${CONTENT_MAX_WIDTH}px;
   margin: auto;
 `
 
