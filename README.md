@@ -23,3 +23,7 @@ Since above command starts several docker containers, please run following comma
 ```bash
 $ make remove-containers
 ```
+
+## Entity–relationship diagram
+
+![Entity–relationship diagram](./ER.png)
