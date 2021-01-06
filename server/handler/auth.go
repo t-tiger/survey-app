@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -94,20 +95,10 @@ func createToken(userID string) (string, error) {
 	return s, nil
 }
 
-// retrieveUserID returns userID by decoding jwt with Authorization value
-func retrieveUserID(r *http.Request) *string {
-	cookie, err := r.Cookie(tokenCookieName)
-	if err != nil {
-		return nil
-	}
-	tokenStr := cookie.Value
-	if len(tokenStr) == 0 {
-		return nil
-	}
-
-	// decode json web token
+// userIDFromToken returns userID by decoding json web token
+func userIDFromToken(token string) *string {
 	c := jwt.MapClaims{}
-	_, err = jwt.ParseWithClaims(tokenStr, c, func(t *jwt.Token) (interface{}, error) {
+	_, err := jwt.ParseWithClaims(token, c, func(t *jwt.Token) (interface{}, error) {
 		return []byte(config.Config.SecretKey), nil
 	})
 	if err != nil {
@@ -117,6 +108,22 @@ func retrieveUserID(r *http.Request) *string {
 		return &v
 	}
 	return nil
+}
+
+// retrieveUserID returns userID by decoding jwt with Authorization value
+func retrieveUserID(r *http.Request) *string {
+	// first, retrieve from Authorization Header
+	authHeader := r.Header.Get("Authorization")
+	if len(authHeader) > 0 {
+		tokenVal := strings.Replace(authHeader, "Bearer ", "", 1)
+		return userIDFromToken(tokenVal)
+	}
+	// then, retrieve from cookie
+	cookie, err := r.Cookie(tokenCookieName)
+	if err != nil {
+		return nil
+	}
+	return userIDFromToken(cookie.Value)
 }
 
 func setTokenToCookie(w http.ResponseWriter, token string) {
