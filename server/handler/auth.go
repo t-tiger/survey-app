@@ -34,10 +34,10 @@ type checkAuthResponse struct {
 }
 
 // CheckAuth godoc
-// @Summary Check user's authentication state
+// @Summary Check user authentication state
 // @ID check-auth
-// @Accept json
 // @Produce json
+// @Security ApiKeyAuth
 // @Success 200 {object} checkAuthResponse
 // @Failure 404 {object} errResponse
 // @Router /check_auth [get]
@@ -69,7 +69,7 @@ type loginResponse struct {
 // @ID login
 // @Accept json
 // @Produce json
-// @Param payload body loginRequest true "Authentication info"
+// @Param payload body loginRequest true "Authentication data"
 // @Success 200 {object} loginResponse
 // @Failure 401 {object} errResponse
 // @Router /login [post]
@@ -93,6 +93,13 @@ func (h *Auth) Login(w http.ResponseWriter, r *http.Request) {
 	render.JSON(w, r, &loginResponse{User: user})
 }
 
+// Logout godoc
+// @Summary Clear user authentication state
+// @ID logout
+// @Security ApiKeyAuth
+// @Success 204
+// @Failure 401 {object} errResponse
+// @Router /logout [post]
 func (h *Auth) Logout(w http.ResponseWriter, _ *http.Request) {
 	// remove token cookie
 	c := &http.Cookie{Name: tokenCookieName, Value: "", Path: "/", Expires: time.Unix(0, 0), HttpOnly: true}

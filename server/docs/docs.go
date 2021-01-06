@@ -26,13 +26,15 @@ var doc = `{
     "paths": {
         "/check_auth": {
             "get": {
-                "consumes": [
-                    "application/json"
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
                 ],
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Check user's authentication state",
+                "summary": "Check user authentication state",
                 "operationId": "check-auth",
                 "responses": {
                     "200": {
@@ -62,7 +64,7 @@ var doc = `{
                 "operationId": "login",
                 "parameters": [
                     {
-                        "description": "Authentication info",
+                        "description": "Authentication data",
                         "name": "payload",
                         "in": "body",
                         "required": true,
@@ -80,6 +82,112 @@ var doc = `{
                     },
                     "401": {
                         "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/logout": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "summary": "Clear user authentication state",
+                "operationId": "logout",
+                "responses": {
+                    "204": {
+                        "description": ""
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/respondents": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "List of respondent",
+                "operationId": "respondent-list",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Answered user's email address",
+                        "name": "email",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Answered user's name",
+                        "name": "name",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Comma separated ids of survey",
+                        "name": "surveyIds",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/handler.respondentResponse"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Create respondent for survey",
+                "operationId": "respondent-create",
+                "parameters": [
+                    {
+                        "description": "Respondent data",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handler.respondentCreateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/handler.respondentResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/handler.errResponse"
                         }
@@ -135,6 +243,37 @@ var doc = `{
             "properties": {
                 "user": {
                     "$ref": "#/definitions/entity.User"
+                }
+            }
+        },
+        "handler.respondentCreateRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "option_ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "survey_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "handler.respondentResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "survey_id": {
+                    "type": "string"
                 }
             }
         }

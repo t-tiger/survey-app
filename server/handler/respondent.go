@@ -37,6 +37,16 @@ type respondentResponse struct {
 	SurveyID string `json:"survey_id"`
 }
 
+// List godoc
+// @Summary List of respondent
+// @ID respondent-list
+// @Produce json
+// @Param email query string true "Answered user's email address"
+// @Param name query string true "Answered user's name"
+// @Param surveyIds query string true "Comma separated ids of survey"
+// @Success 200 {array} respondentResponse
+// @Failure 400 {object} errResponse
+// @Router /respondents [get]
 func (h *Respondent) List(w http.ResponseWriter, r *http.Request) {
 	// split comma separated surveyIDs
 	q := r.URL.Query()
@@ -45,7 +55,7 @@ func (h *Respondent) List(w http.ResponseWriter, r *http.Request) {
 	}
 	var req respondentListRequest
 	if err := decoder.Decode(&req, q); err != nil {
-		handleError(err, w)
+		handleError(cerrors.Errorf(cerrors.InvalidInput, err.Error()), w)
 		return
 	}
 	rs, err := h.listUsecase.Call(r.Context(), req.SurveyIDs, req.Email, req.Name)
@@ -68,6 +78,15 @@ type respondentCreateRequest struct {
 	OptionsIDs []string `json:"option_ids"`
 }
 
+// Create godoc
+// @Summary Create respondent for survey
+// @ID respondent-create
+// @Accept json
+// @Produce json
+// @Param payload body respondentCreateRequest true "Respondent data"
+// @Success 201 {object} respondentResponse
+// @Failure 400 {object} errResponse
+// @Router /respondents [post]
 func (h *Respondent) Create(w http.ResponseWriter, r *http.Request) {
 	var req respondentCreateRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {

@@ -31,6 +31,26 @@ definitions:
       user:
         $ref: '#/definitions/entity.User'
     type: object
+  handler.respondentCreateRequest:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      option_ids:
+        items:
+          type: string
+        type: array
+      survey_id:
+        type: string
+    type: object
+  handler.respondentResponse:
+    properties:
+      id:
+        type: string
+      survey_id:
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -40,8 +60,6 @@ info:
 paths:
   /check_auth:
     get:
-      consumes:
-      - application/json
       operationId: check-auth
       produces:
       - application/json
@@ -54,14 +72,16 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/handler.errResponse'
-      summary: Check user's authentication state
+      security:
+      - ApiKeyAuth: []
+      summary: Check user authentication state
   /login:
     post:
       consumes:
       - application/json
       operationId: login
       parameters:
-      - description: Authentication info
+      - description: Authentication data
         in: body
         name: payload
         required: true
@@ -79,6 +99,75 @@ paths:
           schema:
             $ref: '#/definitions/handler.errResponse'
       summary: Authenticate User
+  /logout:
+    post:
+      operationId: logout
+      responses:
+        "204":
+          description: ""
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handler.errResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Clear user authentication state
+  /respondents:
+    get:
+      operationId: respondent-list
+      parameters:
+      - description: Answered user's email address
+        in: query
+        name: email
+        required: true
+        type: string
+      - description: Answered user's name
+        in: query
+        name: name
+        required: true
+        type: string
+      - description: Comma separated ids of survey
+        in: query
+        name: surveyIds
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/handler.respondentResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errResponse'
+      summary: List of respondent
+    post:
+      consumes:
+      - application/json
+      operationId: respondent-create
+      parameters:
+      - description: Respondent data
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/handler.respondentCreateRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handler.respondentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errResponse'
+      summary: Create respondent for survey
 securityDefinitions:
   ApiKeyAuth:
     in: header
