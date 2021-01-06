@@ -34,6 +34,12 @@ Since above command starts several docker containers, please run following comma
 $ make remove-containers
 ```
 
+### Documentation
+
+While server application is running, you can access api documentation at the following URL.
+
+`http://localhost:8080/swagger/index.html`
+
 ## Entity–relationship diagram
 
 ![Entity–relationship diagram](./ER.png)
