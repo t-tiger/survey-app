@@ -3,10 +3,9 @@ package usecase
 import (
 	"context"
 
-	"github.com/t-tiger/survey/server/service"
-
 	"github.com/t-tiger/survey/server/entity"
 	"github.com/t-tiger/survey/server/repository"
+	"github.com/t-tiger/survey/server/service"
 )
 
 type SurveyCreate struct {
