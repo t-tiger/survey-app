@@ -28,6 +28,16 @@ type userCreateResponse struct {
 	User entity.User `json:"user"`
 }
 
+// Create godoc
+// @Summary Create user
+// @ID user-create
+// @Accept json
+// @Produce json
+// @Param payload body userCreateRequest true "User data"
+// @Success 201 {object} userCreateResponse
+// @Failure 400 {object} errResponse
+// @Failure 409 {object} errResponse
+// @Router /users [post]
 func (h *User) Create(w http.ResponseWriter, r *http.Request) {
 	var req userCreateRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -45,5 +55,6 @@ func (h *User) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	setTokenToCookie(w, token)
+	w.WriteHeader(http.StatusCreated)
 	render.JSON(w, r, &userCreateResponse{User: user})
 }

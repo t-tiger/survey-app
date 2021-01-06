@@ -125,6 +125,20 @@ definitions:
       title:
         type: string
     type: object
+  handler.userCreateRequest:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    type: object
+  handler.userCreateResponse:
+    properties:
+      user:
+        $ref: '#/definitions/entity.User'
+    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -376,6 +390,34 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Update survey
+  /users:
+    post:
+      consumes:
+      - application/json
+      operationId: user-create
+      parameters:
+      - description: User data
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/handler.userCreateRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handler.userCreateResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/handler.errResponse'
+      summary: Create user
 securityDefinitions:
   ApiKeyAuth:
     in: header
