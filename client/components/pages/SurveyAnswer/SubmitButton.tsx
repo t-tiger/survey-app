@@ -6,7 +6,8 @@ import { Box, Button } from '@material-ui/core'
 
 import { postRespondent } from 'modules/respondent/api'
 import { useMessageCenter } from 'utils/messageCenter'
-import { saveRespondentUser } from "modules/survey/helpers";
+import { saveRespondentUser } from 'modules/survey/helpers'
+import { validateRespondent } from 'modules/respondent/helpers'
 
 import SurveyAnswerContext from 'components/pages/SurveyAnswer/Context'
 import MultiLineToolTip from 'components/atoms/MultiLineTooltip'
@@ -18,22 +19,8 @@ const SubmitButton: React.FC = () => {
   const { survey, respondent, answers } = useContext(SurveyAnswerContext)
   const { showMessage } = useMessageCenter()
 
-  const validate = () => {
-    const errs = []
-    if (respondent.name.trim().length === 0) {
-      errs.push('Please input your name.')
-    }
-    if (respondent.email.trim().length === 0) {
-      errs.push('Please input your email.')
-    }
-    if (Object.keys(answers).length < survey.questions.length) {
-      errs.push('Please answer all questions.')
-    }
-    return errs
-  }
-
   useEffect(() => {
-    setValidationErrs(validate())
+    setValidationErrs(validateRespondent(respondent, answers, survey))
   }, [survey, respondent, answers])
 
   const handleSubmit = async () => {

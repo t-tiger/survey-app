@@ -8,6 +8,7 @@ import {
   Survey,
 } from 'modules/survey/types'
 import { issueId } from 'utils/id'
+import { validateSurvey } from "modules/survey/helpers";
 
 import QuestionEdit from 'components/organisms/SurveyEditForm/QuestionEdit'
 import MultiLineToolTip from 'components/atoms/MultiLineTooltip'
@@ -37,29 +38,8 @@ const SurveyEditForm: React.FC<Props> = ({ survey, pageTitle, submitTitle, onSub
   ])
   const [validationErrs, setValidationErrs] = useState<string[]>([])
 
-  const validate = () => {
-    const errs = []
-    if (title.trim().length === 0) {
-      errs.push('Please input survey title.')
-    }
-    if (questions.length === 0) {
-      errs.push('At least one question is required.')
-    }
-    if (questions.some((q) => q.title.trim().length === 0)) {
-      errs.push('Please input question title.')
-    }
-    if (
-      questions.some(
-        (q) => q.options.filter((o) => o.title.trim().length > 0).length === 0,
-      )
-    ) {
-      errs.push('At least one option is required for every question.')
-    }
-    return errs
-  }
-
   useEffect(() => {
-    setValidationErrs(validate())
+    setValidationErrs(validateSurvey(title, questions))
   }, [title, questions])
 
   const handleAddQuestion = () => {
