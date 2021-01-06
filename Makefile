@@ -4,7 +4,7 @@ build-and-start:
 	make docker-build && \
 	docker-compose down && \
 	docker-compose up -d db && \
-	sleep 4 && \
+	sleep 6 && \
 	docker-compose up -d survey-server && \
 	cd ../client && \
 	make docker-build && \
