@@ -1,10 +1,12 @@
-import { Survey } from 'modules/survey/types'
+import { Option } from 'modules/survey/types'
 
 type RespondentUser = { name: string; email: string }
 
 const RESPONDENT_STORAGE_KEY = 'respondent_user'
 
-export const totalVoteCount = (survey: Pick<Survey, 'questions'>) =>
+export const totalVoteCount = (survey: {
+  questions: Array<{ options: Array<Pick<Option, 'vote_count'>> }>
+}) =>
   survey.questions.reduce(
     (n1, q) => n1 + q.options.reduce((n2, o) => n2 + o.vote_count, 0),
     0,

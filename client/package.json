@@ -6,6 +6,7 @@
     "dev": "API_ENDPOINT=http://localhost:8080/api next dev",
     "build": "API_ENDPOINT=http://localhost:8080/api next build",
     "start": "next start",
+    "test": "jest",
     "fmt": "prettier --write \"./{components,const,modules,pages,utils}/**/*.{js,ts,tsx}\""
   },
   "dependencies": {
