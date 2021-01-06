@@ -194,6 +194,213 @@ var doc = `{
                     }
                 }
             }
+        },
+        "/surveys": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "List of survey",
+                "operationId": "survey-list",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "What pages of survey to get",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "default": 20,
+                        "description": "How many surveys to get",
+                        "name": "count",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handler.surveyListResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Create survey",
+                "operationId": "survey-create",
+                "parameters": [
+                    {
+                        "description": "Survey data",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handler.surveySaveRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/handler.surveyResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/surveys/{id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Detail of survey",
+                "operationId": "survey-show",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Survey ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handler.surveyResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Update survey",
+                "operationId": "survey-update",
+                "parameters": [
+                    {
+                        "description": "Survey data",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handler.surveySaveRequest"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Survey ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handler.surveyResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "summary": "Delete survey",
+                "operationId": "survey-delete",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Survey ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": ""
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -246,6 +453,43 @@ var doc = `{
                 }
             }
         },
+        "handler.optionResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "sequence": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "vote_count": {
+                    "type": "integer"
+                }
+            }
+        },
+        "handler.questionResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "options": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/handler.optionResponse"
+                    }
+                },
+                "sequence": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
         "handler.respondentCreateRequest": {
             "type": "object",
             "properties": {
@@ -273,6 +517,84 @@ var doc = `{
                     "type": "string"
                 },
                 "survey_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "handler.surveyListResponse": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/handler.surveyResponse"
+                    }
+                },
+                "total_count": {
+                    "type": "integer"
+                }
+            }
+        },
+        "handler.surveyPublisher": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "handler.surveyResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "publisher": {
+                    "$ref": "#/definitions/handler.surveyPublisher"
+                },
+                "questions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/handler.questionResponse"
+                    }
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "handler.surveySaveRequest": {
+            "type": "object",
+            "properties": {
+                "questions": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "options": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "title": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            },
+                            "title": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "title": {
                     "type": "string"
                 }
             }

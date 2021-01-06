@@ -31,6 +31,30 @@ definitions:
       user:
         $ref: '#/definitions/entity.User'
     type: object
+  handler.optionResponse:
+    properties:
+      id:
+        type: string
+      sequence:
+        type: integer
+      title:
+        type: string
+      vote_count:
+        type: integer
+    type: object
+  handler.questionResponse:
+    properties:
+      id:
+        type: string
+      options:
+        items:
+          $ref: '#/definitions/handler.optionResponse'
+        type: array
+      sequence:
+        type: integer
+      title:
+        type: string
+    type: object
   handler.respondentCreateRequest:
     properties:
       email:
@@ -49,6 +73,56 @@ definitions:
       id:
         type: string
       survey_id:
+        type: string
+    type: object
+  handler.surveyListResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/handler.surveyResponse'
+        type: array
+      total_count:
+        type: integer
+    type: object
+  handler.surveyPublisher:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+  handler.surveyResponse:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      publisher:
+        $ref: '#/definitions/handler.surveyPublisher'
+      questions:
+        items:
+          $ref: '#/definitions/handler.questionResponse'
+        type: array
+      title:
+        type: string
+    type: object
+  handler.surveySaveRequest:
+    properties:
+      questions:
+        items:
+          properties:
+            options:
+              items:
+                properties:
+                  title:
+                    type: string
+                type: object
+              type: array
+            title:
+              type: string
+          type: object
+        type: array
+      title:
         type: string
     type: object
 host: localhost:8080
@@ -168,6 +242,140 @@ paths:
           schema:
             $ref: '#/definitions/handler.errResponse'
       summary: Create respondent for survey
+  /surveys:
+    get:
+      operationId: survey-list
+      parameters:
+      - default: 1
+        description: What pages of survey to get
+        in: query
+        name: page
+        required: true
+        type: integer
+      - default: 20
+        description: How many surveys to get
+        in: query
+        name: count
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.surveyListResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errResponse'
+      summary: List of survey
+    post:
+      consumes:
+      - application/json
+      operationId: survey-create
+      parameters:
+      - description: Survey data
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/handler.surveySaveRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handler.surveyResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Create survey
+  /surveys/{id}:
+    delete:
+      operationId: survey-delete
+      parameters:
+      - description: Survey ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: ""
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/handler.errResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.errResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete survey
+    get:
+      operationId: survey-show
+      parameters:
+      - description: Survey ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.surveyResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.errResponse'
+      summary: Detail of survey
+    put:
+      consumes:
+      - application/json
+      operationId: survey-update
+      parameters:
+      - description: Survey data
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/handler.surveySaveRequest'
+      - description: Survey ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.surveyResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/handler.errResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.errResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update survey
 securityDefinitions:
   ApiKeyAuth:
     in: header

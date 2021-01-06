@@ -73,6 +73,15 @@ type optionResponse struct {
 	VoteCount int    `json:"vote_count"`
 }
 
+// List godoc
+// @Summary List of survey
+// @ID survey-list
+// @Produce json
+// @Param page query int true "What pages of survey to get" default(1)
+// @Param count query int true "How many surveys to get" default(20)
+// @Success 200 {object} surveyListResponse
+// @Failure 400 {object} errResponse
+// @Router /surveys [get]
 func (h *Survey) List(w http.ResponseWriter, r *http.Request) {
 	var req surveyListRequest
 	if err := decoder.Decode(&req, r.URL.Query()); err != nil {
@@ -88,6 +97,14 @@ func (h *Survey) List(w http.ResponseWriter, r *http.Request) {
 	render.JSON(w, r, res)
 }
 
+// Show godoc
+// @Summary Detail of survey
+// @ID survey-show
+// @Produce json
+// @Param id path string true "Survey ID"
+// @Success 200 {object} surveyResponse
+// @Failure 404 {object} errResponse
+// @Router /surveys/{id} [get]
 func (h *Survey) Show(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	s, err := h.findUsecase.Call(r.Context(), id)
@@ -109,6 +126,16 @@ type surveySaveRequest struct {
 	} `json:"questions"`
 }
 
+// Create godoc
+// @Summary Create survey
+// @ID survey-create
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param payload body surveySaveRequest true "Survey data"
+// @Success 201 {object} surveyResponse
+// @Failure 400 {object} errResponse
+// @Router /surveys [post]
 func (h *Survey) Create(w http.ResponseWriter, r *http.Request) {
 	var req surveySaveRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -126,6 +153,19 @@ func (h *Survey) Create(w http.ResponseWriter, r *http.Request) {
 	render.JSON(w, r, res)
 }
 
+// Update godoc
+// @Summary Update survey
+// @ID survey-update
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param payload body surveySaveRequest true "Survey data"
+// @Param id path string true "Survey ID"
+// @Success 200 {object} surveyResponse
+// @Failure 400 {object} errResponse
+// @Failure 403 {object} errResponse
+// @Failure 404 {object} errResponse
+// @Router /surveys/{id} [put]
 func (h *Survey) Update(w http.ResponseWriter, r *http.Request) {
 	var req surveySaveRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -140,10 +180,18 @@ func (h *Survey) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	res := newSurveyResponse(s)
-	w.WriteHeader(http.StatusCreated)
 	render.JSON(w, r, res)
 }
 
+// Delete godoc
+// @Summary Delete survey
+// @ID survey-delete
+// @Security ApiKeyAuth
+// @Param id path string true "Survey ID"
+// @Success 204
+// @Failure 403 {object} errResponse
+// @Failure 404 {object} errResponse
+// @Router /surveys/{id} [delete]
 func (h *Survey) Delete(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	userID := r.Context().Value(ctxUserID).(string)
