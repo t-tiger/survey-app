@@ -1,8 +1,9 @@
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
 
-import { Question } from 'modules/survey/types'
 import { Box, Paper, Typography } from '@material-ui/core'
+
+import { Question } from 'modules/survey/types'
 
 type Props = {
   question: Question
