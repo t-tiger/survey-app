@@ -33,6 +33,14 @@ type checkAuthResponse struct {
 	User *entity.User `json:"user"`
 }
 
+// CheckAuth godoc
+// @Summary Check user's authentication state
+// @ID check-auth
+// @Accept json
+// @Produce json
+// @Success 200 {object} checkAuthResponse
+// @Failure 404 {object} errResponse
+// @Router /check_auth [get]
 func (h *Auth) CheckAuth(w http.ResponseWriter, r *http.Request) {
 	var user *entity.User
 	if userID := retrieveUserID(r); userID != nil {
@@ -55,6 +63,16 @@ type loginResponse struct {
 	User entity.User `json:"user"`
 }
 
+// Login godoc
+// @Summary Authenticate User
+// @Describing set authentication token in cookie
+// @ID login
+// @Accept json
+// @Produce json
+// @Param payload body loginRequest true "Authentication info"
+// @Success 200 {object} loginResponse
+// @Failure 401 {object} errResponse
+// @Router /login [post]
 func (h *Auth) Login(w http.ResponseWriter, r *http.Request) {
 	var req loginRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {

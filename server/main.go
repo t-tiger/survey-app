@@ -8,7 +8,9 @@ import (
 	"os"
 	"os/signal"
 
+	httpSwagger "github.com/swaggo/http-swagger"
 	"github.com/t-tiger/survey/server/config"
+	_ "github.com/t-tiger/survey/server/docs"
 	"github.com/t-tiger/survey/server/router"
 	"golang.org/x/sys/unix"
 	"gorm.io/driver/postgres"
@@ -16,6 +18,16 @@ import (
 	"gorm.io/gorm/logger"
 )
 
+// @title Survey backend API
+// @version 0.1
+// @description Server caller for survey backend API.
+
+// @host localhost:8080
+// @BasePath /api
+
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
 func main() {
 	if err := config.Config.Validate(); err != nil {
 		panic(err)
@@ -25,6 +37,7 @@ func main() {
 		panic(err)
 	}
 	r := router.New(db)
+	r.Mount("/swagger", httpSwagger.WrapHandler)
 	srv := &http.Server{Addr: ":8080", Handler: r}
 
 	go func() {

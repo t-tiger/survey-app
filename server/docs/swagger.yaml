@@ -1,0 +1,87 @@
+basePath: /api
+definitions:
+  entity.User:
+    properties:
+      email:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+  handler.checkAuthResponse:
+    properties:
+      user:
+        $ref: '#/definitions/entity.User'
+    type: object
+  handler.errResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  handler.loginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  handler.loginResponse:
+    properties:
+      user:
+        $ref: '#/definitions/entity.User'
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Server caller for survey backend API.
+  title: Survey backend API
+  version: "0.1"
+paths:
+  /check_auth:
+    get:
+      consumes:
+      - application/json
+      operationId: check-auth
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.checkAuthResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.errResponse'
+      summary: Check user's authentication state
+  /login:
+    post:
+      consumes:
+      - application/json
+      operationId: login
+      parameters:
+      - description: Authentication info
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/handler.loginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.loginResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handler.errResponse'
+      summary: Authenticate User
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

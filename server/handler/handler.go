@@ -12,6 +12,10 @@ import (
 // decoder declares globally for the sake of caching
 var decoder = schema.NewDecoder()
 
+type errResponse struct {
+	Message string `json:"message"`
+}
+
 func handleError(err error, w http.ResponseWriter) {
 	log.Error(err.Error())
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
@@ -35,7 +39,8 @@ func handleError(err error, w http.ResponseWriter) {
 		w.WriteHeader(http.StatusInternalServerError)
 	}
 
-	if err := json.NewEncoder(w).Encode(map[string]interface{}{"message": message}); err != nil {
+	res := errResponse{Message: message}
+	if err := json.NewEncoder(w).Encode(&res); err != nil {
 		log.Errorf("failed to encode error message: %+v", err)
 		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 		w.Write([]byte(message))

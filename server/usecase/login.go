@@ -23,12 +23,12 @@ func (u *Login) Call(ctx context.Context, email, password string) (entity.User, 
 		return entity.User{}, cerrors.Errorf(cerrors.Unexpected, err.Error())
 	}
 	if user == nil {
-		return entity.User{}, cerrors.Errorf(cerrors.Duplicated, "email has not been registered")
+		return entity.User{}, cerrors.Errorf(cerrors.Unauthorized, "email has not been registered")
 	}
 	// compare password
 	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordDigest), []byte(password))
 	if err != nil {
-		return entity.User{}, cerrors.Errorf(cerrors.InvalidInput, "failed to authenticate")
+		return entity.User{}, cerrors.Errorf(cerrors.Unauthorized, "failed to authenticate")
 	}
 	return *user, nil
 }

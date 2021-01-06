@@ -39,14 +39,14 @@ func TestLogin_Call(t *testing.T) {
 			email:    "test2@dummy.com",
 			password: string(pw),
 			wantUser: entity.User{},
-			wantErr:  cerrors.Errorf(cerrors.Duplicated, "email has not been registered"),
+			wantErr:  cerrors.Errorf(cerrors.Unauthorized, "email has not been registered"),
 		},
 		{
 			name:     "password is wrong",
 			email:    "test1@dummy.com",
 			password: "foo",
 			wantUser: entity.User{},
-			wantErr:  cerrors.Errorf(cerrors.InvalidInput, "failed to authenticate"),
+			wantErr:  cerrors.Errorf(cerrors.Unauthorized, "failed to authenticate"),
 		},
 		{
 			name:     "email and password is correct",
