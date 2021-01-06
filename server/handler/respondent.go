@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/go-chi/render"
+	"github.com/t-tiger/survey/server/cerrors"
 	"github.com/t-tiger/survey/server/entity"
 	"github.com/t-tiger/survey/server/usecase"
 )
@@ -70,7 +71,7 @@ type respondentCreateRequest struct {
 func (h *Respondent) Create(w http.ResponseWriter, r *http.Request) {
 	var req respondentCreateRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		handleError(err, w)
+		handleError(cerrors.Errorf(cerrors.InvalidInput, err.Error()), w)
 		return
 	}
 	rr, err := h.createUsecase.Call(r.Context(), req.toRespondent())

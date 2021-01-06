@@ -7,6 +7,7 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
+	"github.com/t-tiger/survey/server/cerrors"
 	"github.com/t-tiger/survey/server/entity"
 	"github.com/t-tiger/survey/server/usecase"
 )
@@ -111,7 +112,7 @@ type surveySaveRequest struct {
 func (h *Survey) Create(w http.ResponseWriter, r *http.Request) {
 	var req surveySaveRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		handleError(err, w)
+		handleError(cerrors.Errorf(cerrors.InvalidInput, err.Error()), w)
 		return
 	}
 	userID := r.Context().Value(ctxUserID).(string)
@@ -128,7 +129,7 @@ func (h *Survey) Create(w http.ResponseWriter, r *http.Request) {
 func (h *Survey) Update(w http.ResponseWriter, r *http.Request) {
 	var req surveySaveRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		handleError(err, w)
+		handleError(cerrors.Errorf(cerrors.InvalidInput, err.Error()), w)
 		return
 	}
 	id := chi.URLParam(r, "id")

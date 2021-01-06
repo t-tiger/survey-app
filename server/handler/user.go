@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/render"
+	"github.com/t-tiger/survey/server/cerrors"
 	"github.com/t-tiger/survey/server/entity"
 	"github.com/t-tiger/survey/server/usecase"
 )
@@ -30,7 +31,7 @@ type userCreateResponse struct {
 func (h *User) Create(w http.ResponseWriter, r *http.Request) {
 	var req userCreateRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		handleError(err, w)
+		handleError(cerrors.Errorf(cerrors.InvalidInput, err.Error()), w)
 		return
 	}
 	user, err := h.createUsecase.Call(r.Context(), req.Name, req.Email, req.Password)

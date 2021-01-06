@@ -76,7 +76,7 @@ type loginResponse struct {
 func (h *Auth) Login(w http.ResponseWriter, r *http.Request) {
 	var req loginRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		handleError(err, w)
+		handleError(cerrors.Errorf(cerrors.InvalidInput, err.Error()), w)
 		return
 	}
 	user, err := h.loginUsecase.Call(r.Context(), req.Email, req.Password)
