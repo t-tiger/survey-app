@@ -28,13 +28,6 @@ func TestRespondentFetchList_Call(t *testing.T) {
 		wantErr   error
 	}{
 		{
-			name:      "surveyIDs is empty",
-			surveyIDs: []string{},
-			email:     "test@dummy.com",
-			iName:     "test",
-			wantErr:   cerrors.Errorf(cerrors.InvalidInput, "surveyIds must be present"),
-		},
-		{
 			name:      "email is empty",
 			surveyIDs: []string{"r1", "r2"},
 			email:     "",

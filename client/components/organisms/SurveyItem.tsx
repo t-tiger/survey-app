@@ -41,12 +41,14 @@ type PopperProps = {
 
 type Props = {
   survey: Survey
+  answered?: boolean
   hideButton?: boolean
   onDelete: () => void
 }
 
 const SurveyItem: React.FC<Props> = ({
   survey,
+  answered = false,
   hideButton = false,
   onDelete,
 }) => {
@@ -114,7 +116,7 @@ const SurveyItem: React.FC<Props> = ({
       </Box>
       {!hideButton && (
         <Box mt={3}>
-          {survey.publisher.id === userId ? (
+          {answered || survey.publisher.id === userId ? (
             <Link href={`/surveys/${survey.id}/result`} noDecoration>
               <ActionButton
                 variant="contained"

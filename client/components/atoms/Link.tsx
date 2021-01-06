@@ -1,6 +1,6 @@
 import * as React from 'react'
-import NextLink, { LinkProps as NextLinkProps } from 'next/link'
 
+import NextLink, { LinkProps as NextLinkProps } from 'next/link'
 import MuiLink, { LinkProps as MuiLinkProps } from '@material-ui/core/Link'
 
 type NextComposedProps = Omit<

@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react'
-import { Box, Tooltip } from '@material-ui/core'
+
+import { Tooltip } from '@material-ui/core'
 
 type Props = {
   titles: string[]

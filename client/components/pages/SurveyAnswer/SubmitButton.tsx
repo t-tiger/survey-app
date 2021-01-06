@@ -4,7 +4,7 @@ import Router from 'next/router'
 
 import { Box, Button } from '@material-ui/core'
 
-import { postRespondent } from 'modules/survey/api'
+import { postRespondent } from 'modules/respondent/api'
 import { useMessageCenter } from 'utils/messageCenter'
 import { saveRespondentUser } from "modules/survey/helpers";
 

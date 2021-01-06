@@ -7,6 +7,8 @@ import { fetchSurveyList } from 'modules/survey/api'
 import { useMessageCenter } from 'utils/messageCenter'
 import { useToggleDialog } from 'utils/dialog'
 import { Survey } from 'modules/survey/types'
+import { fetchRespondentList } from 'modules/respondent/api'
+import { getRespondentUser } from 'modules/survey/helpers'
 
 import Link from 'components/atoms/Link'
 import DefaultTemplate from 'components/templates/DefaultTemplate'
@@ -16,11 +18,13 @@ import ContentWrapper from 'components/atoms/ContentWrapper'
 import SurveyItem from 'components/organisms/SurveyItem'
 import AuthDialog from 'components/organisms/AuthDialog/Index'
 
+type Answers = { [surveyID: string]: true }
+
 const Index: React.FC = () => {
   const [ready, setReady] = useState(false)
   const [surveys, setSurveys] = useState<Survey[]>([])
+  const [answers, setAnswers] = useState<Answers>({})
 
-  const { userId } = useContext(AppContext)
   const { showMessage } = useMessageCenter()
 
   const fetch = async (page = 1) => {
@@ -29,6 +33,16 @@ const Index: React.FC = () => {
         data: { items },
       } = await fetchSurveyList(page, 30)
       setSurveys(items)
+
+      // fetch respondent list to detect whether each survey has been answered
+      const respondent = getRespondentUser()
+      if (respondent && items.length > 0) {
+        const { data: rs } = await fetchRespondentList({
+          ...respondent,
+          surveyIds: items.map((s) => s.id),
+        })
+        setAnswers(rs.reduce((a, r) => ({ ...a, [r.survey_id]: true }), {}))
+      }
     } catch {
       showMessage('error', 'Failed to fetch survey list.')
     } finally {
@@ -45,7 +59,7 @@ const Index: React.FC = () => {
       {!ready ? (
         <InitialLoading />
       ) : (
-        <Content surveys={surveys} refresh={fetch} />
+        <Content surveys={surveys} answers={answers} refresh={fetch} />
       )}
     </DefaultTemplate>
   )
@@ -53,10 +67,11 @@ const Index: React.FC = () => {
 
 type ContentProps = {
   surveys: Survey[]
+  answers: Answers
   refresh: () => void
 }
 
-const Content: React.FC<ContentProps> = ({ surveys, refresh }) => {
+const Content: React.FC<ContentProps> = ({ surveys, answers, refresh }) => {
   const theme = useTheme()
 
   const { userId } = useContext(AppContext)
@@ -95,7 +110,11 @@ const Content: React.FC<ContentProps> = ({ surveys, refresh }) => {
       <Grid container spacing={3}>
         {surveys.map((s) => (
           <Grid key={s.id} item xs={12} sm={6} md={4}>
-            <SurveyItem survey={s} onDelete={refresh} />
+            <SurveyItem
+              survey={s}
+              answered={s.id in answers}
+              onDelete={refresh}
+            />
           </Grid>
         ))}
       </Grid>

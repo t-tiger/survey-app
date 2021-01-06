@@ -17,9 +17,6 @@ func NewRespondentFetchList(repo repository.Respondent) *RespondentFetchList {
 }
 
 func (u *RespondentFetchList) Call(ctx context.Context, surveyIDs []string, email, name string) ([]entity.Respondent, error) {
-	if len(surveyIDs) == 0 {
-		return nil, cerrors.Errorf(cerrors.InvalidInput, "surveyIds must be present")
-	}
 	if len(email) == 0 {
 		return nil, cerrors.Errorf(cerrors.InvalidInput, "email must be present")
 	}
