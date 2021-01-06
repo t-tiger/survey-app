@@ -26,7 +26,7 @@ const QuestionItem: React.FC<Props> = ({ question }) => {
           Q{question.sequence}. {question.title}
         </Typography>
         {question.options.map((o, i) => (
-          <BarContainer mt={2} paddingX={2} paddingY={1.2}>
+          <BarContainer key={o.id} mt={2} paddingX={2} paddingY={1.2}>
             <BarPercentage style={{ width: `${percentages[i]}%` }} />
             <BarContent>
               <span>{o.title}</span>

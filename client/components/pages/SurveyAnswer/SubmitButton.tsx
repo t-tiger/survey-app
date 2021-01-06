@@ -6,6 +6,7 @@ import { Box, Button } from '@material-ui/core'
 
 import { postRespondent } from 'modules/survey/api'
 import { useMessageCenter } from 'utils/messageCenter'
+import { saveRespondentUser } from "modules/survey/helpers";
 
 import SurveyAnswerContext from 'components/pages/SurveyAnswer/Context'
 import MultiLineToolTip from 'components/atoms/MultiLineTooltip'
@@ -38,6 +39,7 @@ const SubmitButton: React.FC = () => {
   const handleSubmit = async () => {
     try {
       setSending(true)
+      saveRespondentUser(respondent)
 
       const { name, email } = respondent
       await postRespondent({

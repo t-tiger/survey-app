@@ -1,6 +1,7 @@
 import React, { ReactNode, useState } from 'react'
 
 import { Option, Survey } from 'modules/survey/types'
+import { getRespondentUser } from 'modules/survey/helpers'
 
 export type SurveyAnswerState = {
   survey: Survey
@@ -22,8 +23,9 @@ export const SurveyAnswerContextProvider: React.FC<Props> = ({
   children,
 }) => {
   const [answers, setAnswers] = useState<SurveyAnswerState['answers']>({})
-  const [respondent, setRespondent] = useState({ name: '', email: '' })
-
+  const [respondent, setRespondent] = useState(
+    getRespondentUser() || { name: '', email: '' },
+  )
   return (
     <SurveyAnswerContext.Provider
       value={{ survey, answers, setAnswers, respondent, setRespondent }}
