@@ -9,13 +9,11 @@ build-and-start:
 	cd ../client && \
 	make docker-build && \
 	docker-compose down && \
-	docker-compose up -d survey-client && \
-	cd -
+	docker-compose up -d survey-client
 
 .PHONY: remove-containers
 remove-containers:
 	cd server && \
 	docker-compose down && \
 	cd ../client && \
-	docker-compose down && \
-	cd -
+	docker-compose down
